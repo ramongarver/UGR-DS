@@ -1,12 +1,20 @@
-import java.util.*;
+import java.util.Observable;
+import java.util.ArrayList;
 
 public class Notas extends Observable {
-
 	ArrayList<Nota> calificaciones;
 
+
+	public Notas() {
+
+	}
+
+	public void addNota(String estudiante, float nota) {
+		calificaciones.add(new Nota(estudiante, nota));
+	}
+
 	public ArrayList<Nota> getState() {
-		// TODO - implement Notas.getState
-		throw new UnsupportedOperationException();
+		return calificaciones;
 	}
 
 	/**
@@ -14,8 +22,7 @@ public class Notas extends Observable {
 	 * @param calificaciones
 	 */
 	public void setState(ArrayList<Nota> calificaciones) {
-		// TODO - implement Notas.setState
-		throw new UnsupportedOperationException();
+		this.calificaciones = calificaciones;
 	}
 
 }

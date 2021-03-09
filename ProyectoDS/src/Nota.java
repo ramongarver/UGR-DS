@@ -1,7 +1,7 @@
 public class Nota {
 
-	private int estudiante;
-	private int calificacion;
+	private String estudiante;
+	private float calificacion;
 
 	/**
 	 * 
@@ -9,8 +9,15 @@ public class Nota {
 	 * @param calificacion
 	 */
 	public Nota(String estudiante, float calificacion) {
-		// TODO - implement Nota.Nota
-		throw new UnsupportedOperationException();
+		this.estudiante = estudiante;
+		this.calificacion = calificacion;
 	}
 
+	public String getEstudiante() {
+		return estudiante;
+	}
+
+	public float getCalificacion() {
+		return calificacion;
+	}
 }
