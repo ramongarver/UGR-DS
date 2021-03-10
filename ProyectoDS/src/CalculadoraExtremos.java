@@ -48,6 +48,7 @@ public class CalculadoraExtremos extends Thread implements Observer {
     @Override
     public void run() {
         panelExtremos = new PanelExtremos();
+        panelExtremos.setVisible();
 
         while(true) {
             try {

@@ -35,6 +35,7 @@ public class GeneradorMedias extends Thread implements Observer {
     @Override
     public void run() {
         panelMedia = new PanelMedia();
+        panelMedia.setVisible();
 
         while(true) {
             try {
