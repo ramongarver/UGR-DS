@@ -17,33 +17,32 @@ public class Notas extends Observable {
     }
 
     public void changeNota(String estudiante, float nota) throws NoSuchElementException {
-        Nota buscada = calificaciones.stream()
-                .filter(elemento -> estudiante.equals(elemento.getEstudiante()))
-                .findAny()
-                .orElse(null);
+        Nota estudianteBuscado = buscarEstudiante(estudiante);
 
-        if(buscada == null) {
+        if(estudianteBuscado == null)
             throw new NoSuchElementException("No se ha encontrado al estudiante");
-        }
 
-        buscada.setCalificacion(nota);
+        estudianteBuscado.setCalificacion(nota);
         setChanged();
         notifyObservers(getState());
     }
 
     public void changeEstudiante(String oldName, String newName) throws NoSuchElementException {
-        Nota buscada = calificaciones.stream()
-                .filter(elemento -> oldName.equals(elemento.getEstudiante()))
-                .findAny()
-                .orElse(null);
+        Nota estudianteBuscado = buscarEstudiante(oldName);
 
-        if(buscada == null) {
+        if(estudianteBuscado == null)
             throw new NoSuchElementException("No se ha encontrado al estudiante");
-        }
 
-        buscada.setEstudiante(newName);
+        estudianteBuscado.setEstudiante(newName);
         setChanged();
         notifyObservers(getState());
+    }
+
+    private Nota buscarEstudiante(String estudiante) {
+        return calificaciones.stream()
+                .filter(elemento -> estudiante.equals(elemento.getEstudiante()))
+                .findAny()
+                .orElse(null);
     }
 
     public ArrayList<Nota> getState() {
