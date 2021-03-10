@@ -13,7 +13,7 @@ public class Notas extends Observable {
     public void addNota(String estudiante, float nota) {
         calificaciones.add(new Nota(estudiante, nota));
         setChanged();
-        notifyObservers();
+        notifyObservers(getState());
     }
 
     public void changeNota(String estudiante, float nota) throws NoSuchElementException {
@@ -28,7 +28,7 @@ public class Notas extends Observable {
 
         buscada.setCalificacion(nota);
         setChanged();
-        notifyObservers();
+        notifyObservers(getState());
     }
 
     public void changeEstudiante(String oldName, String newName) throws NoSuchElementException {
@@ -43,7 +43,7 @@ public class Notas extends Observable {
 
         buscada.setEstudiante(newName);
         setChanged();
-        notifyObservers();
+        notifyObservers(getState());
     }
 
     public ArrayList<Nota> getState() {

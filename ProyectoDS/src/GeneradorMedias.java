@@ -17,7 +17,7 @@ public class GeneradorMedias implements Observer {
     @Override
     public void update(Observable observable, Object arg) {
         if(observable == contenedorNotas) {
-            calificaciones = contenedorNotas.getState();
+            calificaciones = (ArrayList<Nota>) arg;
             media = calcularMedia();
         }
     }

@@ -19,7 +19,7 @@ public class CalculadoraExtremos implements Observer {
     @Override
     public void update(Observable observable, Object arg) {
         if(observable == contenedorNotas) {
-            calificaciones = contenedorNotas.getState();
+            calificaciones = (ArrayList<Nota>) arg;
             max = calcularMaximo();
             min = calcularMinimo();
         }
