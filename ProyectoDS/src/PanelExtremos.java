@@ -7,15 +7,17 @@ public class PanelExtremos {
 
     public void setMaximo(double max) {
         maximo.setText(Double.toString(max));
+        extremosPanel.repaint();
     }
 
     public void setMinimo(double min) {
         minimo.setText(Double.toString(min));
+        extremosPanel.repaint();
     }
 
     public void setVisible() {
         JFrame frame = new JFrame("PanelExtremos");
-        frame.setContentPane(new PanelExtremos().extremosPanel);
+        frame.setContentPane(extremosPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

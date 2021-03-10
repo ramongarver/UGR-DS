@@ -11,6 +11,7 @@ public class GeneradorMedias extends Thread implements Observer {
     PanelMedia panelMedia;
 
     public GeneradorMedias(Notas n) {
+        panelMedia = new PanelMedia();
         contenedorNotas = n;
         this.media = -1.0;
         calificaciones = new ArrayList<>();
@@ -21,6 +22,7 @@ public class GeneradorMedias extends Thread implements Observer {
         if(observable == contenedorNotas) {
             calificaciones = (ArrayList<Nota>) arg;
             media = calcularMedia();
+            panelMedia.setMedia(media);
         }
     }
 
@@ -34,7 +36,6 @@ public class GeneradorMedias extends Thread implements Observer {
 
     @Override
     public void run() {
-        panelMedia = new PanelMedia();
         panelMedia.setVisible();
 
         while(true) {

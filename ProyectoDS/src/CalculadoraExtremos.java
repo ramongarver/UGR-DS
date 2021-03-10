@@ -12,6 +12,7 @@ public class CalculadoraExtremos extends Thread implements Observer {
     PanelExtremos panelExtremos;
 
     public CalculadoraExtremos(Notas n) {
+        panelExtremos = new PanelExtremos();
         contenedorNotas = n;
         max = Float.MIN_VALUE;
         min = Float.MAX_VALUE;
@@ -24,6 +25,8 @@ public class CalculadoraExtremos extends Thread implements Observer {
             calificaciones = (ArrayList<Nota>) arg;
             max = calcularMaximo();
             min = calcularMinimo();
+            panelExtremos.setMaximo(max);
+            panelExtremos.setMinimo(min);
         }
     }
 
@@ -47,7 +50,6 @@ public class CalculadoraExtremos extends Thread implements Observer {
 
     @Override
     public void run() {
-        panelExtremos = new PanelExtremos();
         panelExtremos.setVisible();
 
         while(true) {
