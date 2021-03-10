@@ -10,13 +10,13 @@ public class Notas extends Observable {
         calificaciones = new ArrayList<>();
     }
 
-    public void addNota(String estudiante, float nota) {
+    public void addNota(String estudiante, double nota) {
         calificaciones.add(new Nota(estudiante, nota));
         setChanged();
         notifyObservers(getState());
     }
 
-    public void changeNota(String estudiante, float nota) throws NoSuchElementException {
+    public void changeNota(String estudiante, double nota) throws NoSuchElementException {
         Nota estudianteBuscado = buscarEstudiante(estudiante);
 
         if(estudianteBuscado == null)

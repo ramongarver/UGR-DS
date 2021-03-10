@@ -2,11 +2,13 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class GeneradorMedias implements Observer {
+public class GeneradorMedias extends Thread implements Observer {
 
     private double media;
     private ArrayList<Nota> calificaciones;
     private final Notas contenedorNotas;
+
+    PanelMedia panelMedia;
 
     public GeneradorMedias(Notas n) {
         contenedorNotas = n;
@@ -28,5 +30,18 @@ public class GeneradorMedias implements Observer {
             suma += n.getCalificacion();
 
         return suma / calificaciones.size();
+    }
+
+    @Override
+    public void run() {
+        panelMedia = new PanelMedia();
+
+        while(true) {
+            try {
+                sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

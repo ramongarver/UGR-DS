@@ -8,7 +8,7 @@ public class Nota {
      * @param estudiante Nombre del estudiante
      * @param calificacion Calificación que ha obtenido
      */
-    public Nota(String estudiante, float calificacion) {
+    public Nota(String estudiante, double calificacion) {
         this.estudiante = estudiante;
         this.calificacion = calificacion;
     }
