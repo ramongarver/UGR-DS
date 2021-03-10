@@ -6,12 +6,12 @@ public class PanelExtremos {
     private JPanel extremosPanel;
 
     public void setMaximo(double max) {
-        maximo.setText(Double.toString(max));
+        maximo.setText(String.format("%.2f", max));
         extremosPanel.repaint();
     }
 
     public void setMinimo(double min) {
-        minimo.setText(Double.toString(min));
+        minimo.setText(String.format("%.2f", min));
         extremosPanel.repaint();
     }
 

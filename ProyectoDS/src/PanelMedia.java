@@ -5,7 +5,7 @@ public class PanelMedia {
     private JPanel mediaPanel;
 
     public void setMedia(double m) {
-        media.setText(Double.toString(m));
+        media.setText(String.format("%.2f", m));
         mediaPanel.repaint();
     }
 
