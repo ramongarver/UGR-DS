@@ -26,7 +26,7 @@ public class CalculadoraExtremos implements Observer {
     }
 
     private double calcularMaximo() {
-        double max = Float.MIN_VALUE;
+        double max = Double.MIN_VALUE;
         for(Nota calificacion : calificaciones)
             if(calificacion.getCalificacion() > max)
                 max = calificacion.getCalificacion();
@@ -35,7 +35,7 @@ public class CalculadoraExtremos implements Observer {
     }
 
     private double calcularMinimo() {
-        double min = Float.MAX_VALUE;
+        double min = Double.MAX_VALUE;
         for (Nota calificacion : calificaciones)
             if (calificacion.getCalificacion() < min)
                 min = calificacion.getCalificacion();
