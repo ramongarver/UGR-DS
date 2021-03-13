@@ -8,7 +8,7 @@ public class GeneradorMedias extends Thread implements Observer {
     private ArrayList<Nota> calificaciones;
     private final Notas contenedorNotas;
 
-    PanelMedia panelMedia;
+    private final PanelMedia panelMedia;
 
     public GeneradorMedias(Notas n) {
         panelMedia = new PanelMedia();
@@ -44,6 +44,8 @@ public class GeneradorMedias extends Thread implements Observer {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            // Actualizar
+            this.update(contenedorNotas, contenedorNotas.getState());
         }
     }
 }

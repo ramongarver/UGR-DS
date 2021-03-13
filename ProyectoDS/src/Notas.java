@@ -3,7 +3,7 @@ import java.util.Observable;
 import java.util.ArrayList;
 
 public class Notas extends Observable {
-    ArrayList<Nota> calificaciones;
+    private final ArrayList<Nota> calificaciones;
 
     public Notas() {
         super();

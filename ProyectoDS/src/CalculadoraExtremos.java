@@ -2,14 +2,14 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.ArrayList;
 
-public class CalculadoraExtremos extends Thread implements Observer {
+public class CalculadoraExtremos implements Observer {
 
     private double max;
     private double min;
     private ArrayList<Nota> calificaciones;
     private final Notas contenedorNotas;
 
-    PanelExtremos panelExtremos;
+    private final PanelExtremos panelExtremos;
 
     public CalculadoraExtremos(Notas n) {
         panelExtremos = new PanelExtremos();
@@ -17,6 +17,7 @@ public class CalculadoraExtremos extends Thread implements Observer {
         max = Float.MIN_VALUE;
         min = Float.MAX_VALUE;
         calificaciones = new ArrayList<>();
+        panelExtremos.setVisible();
     }
 
     @Override
@@ -46,18 +47,5 @@ public class CalculadoraExtremos extends Thread implements Observer {
                 min = calificacion.getCalificacion();
 
         return min;
-    }
-
-    @Override
-    public void run() {
-        panelExtremos.setVisible();
-
-        while(true) {
-            try {
-                sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
