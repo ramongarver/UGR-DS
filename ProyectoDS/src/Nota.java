@@ -1,10 +1,13 @@
+/**
+ * Representa una nota de un estudiante
+ */
 public class Nota {
 
     private String estudiante;
     private double calificacion;
 
     /**
-     *
+     * Construye un objeto Nota
      * @param estudiante Nombre del estudiante
      * @param calificacion Calificación que ha obtenido
      */
