@@ -7,6 +7,6 @@ class GrupoTeoria < Grupo
   end
 
   def to_s
-    "GrupoTeoria{nombre='#{@nombre}', aula=#{@aula.nombre unless @aula.nil?}}"
+    "GrupoTeoria{nombre='#{@nombre}', aula=#{@aula&.nombre}}"
   end
 end

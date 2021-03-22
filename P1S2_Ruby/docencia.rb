@@ -35,10 +35,8 @@ class Docencia
   end
 
   def to_s
-    s = "Docencia{grupos=["
-    @grupos.each { |grupo|
-      s += grupo.to_s
-    }
+    s = 'Docencia{grupos=['
+    @grupos.each { |grupo| s += grupo.to_s }
     s += "], aulas=#{@aulas}}"
   end
 end
