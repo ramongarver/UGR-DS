@@ -47,8 +47,8 @@ public class Docencia {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Docencia{");
-        sb.append("aulas=").append(aulas);
-        sb.append(", grupos=").append(grupos);
+        //sb.append("aulas=").append(aulas);
+        sb.append("grupos=").append(grupos);
         sb.append('}');
         return sb.toString();
     }

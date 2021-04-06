@@ -1,7 +1,7 @@
 /**
  * Se encarga de la ejecución del programa principal
  */
-public class Controlador {
+public class Main {
     /**
      * Ejecuta el programa principal
      * @param args Argumentos de entrada (si los hay)

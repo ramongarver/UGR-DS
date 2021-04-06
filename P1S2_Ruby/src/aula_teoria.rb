@@ -5,4 +5,8 @@ class AulaTeoria < Aula
     super
     puts "Creada aula #{@nombre} de teoría"
   end
+
+  def to_s
+    "AulaTeoria{nombre=#{@nombre}"
+  end
 end

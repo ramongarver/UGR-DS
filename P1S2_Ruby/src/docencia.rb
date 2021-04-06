@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'aula_practicas'
 
 class Docencia
@@ -36,7 +38,10 @@ class Docencia
 
   def to_s
     s = 'Docencia{grupos=['
-    @grupos.each { |grupo| s += grupo.to_s }
-    s += "], aulas=#{@aulas}}"
+    @grupos.each { |grupo| s += "#{grupo}, " }
+    s += '], aulas=['
+    @aulas.each { |a| s += "#{a}, " }
+
+    s += ']'
   end
 end

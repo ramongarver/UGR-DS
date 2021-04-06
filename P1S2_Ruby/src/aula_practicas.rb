@@ -14,6 +14,12 @@ class AulaPracticas < Aula
   def initialize_copy(orig)
     super
     @ordenadores = []
-    puts 'AulaPracticas clonada'
+  end
+
+  def to_s
+    s = "AulaPracticas{nombre=#{@nombre}, ordenadores=["
+    @ordenadores.each { |o| s += "#{o}, " }
+
+    s += ']'
   end
 end
