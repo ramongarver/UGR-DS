@@ -1,8 +1,12 @@
-#include "GestorFiltros.h"
-#include "CadenaFiltros.h"
+#include "include/GestorFiltros.h"
 
 
-Notas& GestorFiltros::peticionFiltros(Notas &notas) {
-    Notas& res = cadenaFiltros.ejecutar(notas);
-    return res;
+void GestorFiltros::peticionFiltros(TipoNota t, double n) {
+    notas.addNota(t, n);
+    cadenaFiltros.ejecutar(notas);
+    objetivo.ejecutar(notas);
+}
+
+void GestorFiltros::addFiltro(Filtro & filtro) {
+    cadenaFiltros.addFiltro(filtro);
 }

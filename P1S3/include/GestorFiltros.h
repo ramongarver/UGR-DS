@@ -4,11 +4,16 @@
 
 #include "Notas.h"
 #include "CadenaFiltros.h"
+#include "ObjetivoVerNotas.h"
 
 class GestorFiltros {
+    Notas notas;
     CadenaFiltros cadenaFiltros;
+    ObjetivoVerNotas objetivo;
+
 public:
-    Notas& peticionFiltros(Notas& notas);
+    void addFiltro(Filtro&);
+    void peticionFiltros(TipoNota, double);
 };
 
 

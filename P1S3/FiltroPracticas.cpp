@@ -1,7 +1,6 @@
-#include "FiltroPracticas.h"
+#include "include/FiltroPracticas.h"
 
-Notas& FiltroPracticas::aplicarPorcentaje(Notas &notas) const {
-    double notaPonderada = 0.0;
+void FiltroPracticas::ejecutar(Notas &notas) const {
     size_t size_practicas = 0;
 
     for (int i = 0; i < notas.size(); i++) {
@@ -13,9 +12,6 @@ Notas& FiltroPracticas::aplicarPorcentaje(Notas &notas) const {
         Nota &n = notas.getNota(i);
         if (n.getTipoNota() == TipoNota::practicas) {
             n.setPesoFinal(n.getNota() * coeficientePracticas / size_practicas);
-            n.setTipoNota(TipoNota::final);
         }
     }
-
-    return notas;
 }

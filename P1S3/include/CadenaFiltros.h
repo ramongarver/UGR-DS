@@ -1,15 +1,16 @@
 #ifndef P1S3_CADENAFILTROS_H
 #define P1S3_CADENAFILTROS_H
 
-
+#include <functional>
 #include <vector>
 #include "Filtro.h"
 
 class CadenaFiltros {
-    std::vector<Filtro> cadenaFiltros;
+    std::vector<std::reference_wrapper<Filtro>> cadenaFiltros;
 
 public:
-    Notas& ejecutar(Notas&);
+    void ejecutar(Notas &notas);
+    void addFiltro(Filtro&);
 };
 
 

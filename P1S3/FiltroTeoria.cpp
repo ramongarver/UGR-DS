@@ -1,7 +1,6 @@
-#include "FiltroTeoria.h"
+#include "include/FiltroTeoria.h"
 
-Notas& FiltroTeoria::aplicarPorcentaje(Notas &notas) const {
-    double notaPonderada = 0.0;
+void FiltroTeoria::ejecutar(Notas &notas) const {
     size_t size_teoria = 0;
 
     for (int i = 0; i < notas.size(); i++) {
@@ -11,11 +10,8 @@ Notas& FiltroTeoria::aplicarPorcentaje(Notas &notas) const {
 
     for (int i = 0; i < notas.size(); i++) {
         Nota &n = notas.getNota(i);
-        if (n.getTipoNota() == TipoNota::practicas) {
+        if (n.getTipoNota() == TipoNota::teoria) {
             n.setPesoFinal(n.getNota() * coeficienteTeoria / size_teoria);
-            n.setTipoNota(TipoNota::final);
         }
     }
-
-    return notas;
 }

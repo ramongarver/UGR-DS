@@ -2,7 +2,7 @@
 #define P1S3_TIPONOTA_H
 
 enum class TipoNota {
-    teoria, practicas, final
+    teoria, practicas
 };
 
 #endif //P1S3_TIPONOTA_H

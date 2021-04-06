@@ -1,9 +1,12 @@
-#include "CadenaFiltros.h"
+#include "include/CadenaFiltros.h"
 
-Notas& CadenaFiltros::ejecutar(Notas & notas) {
-    Notas &res = notas;
-    for(const Filtro &f : cadenaFiltros) {
-        res = f.aplicarPorcentaje(notas);
+void CadenaFiltros::ejecutar(Notas &notas) {
+    for(const std::reference_wrapper<Filtro>& f : cadenaFiltros) {
+        f.get().ejecutar(notas);
     }
-    return res;
+}
+
+
+void CadenaFiltros::addFiltro(Filtro& filtro) {
+    cadenaFiltros.emplace_back(filtro);
 }

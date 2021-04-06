@@ -15,6 +15,8 @@ public:
 
     double getNota() const { return nota; }
 
+    double getPesoFinal() const { return pesoFinal; }
+
     void setTipoNota(TipoNota tipoNota) { Nota::tipoNota = tipoNota; };
 
     void setNota(double nota) { Nota::nota = nota; }

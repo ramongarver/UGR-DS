@@ -3,4 +3,4 @@ project(P1S3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(P1S3 main.cpp Nota.cpp Nota.h TipoNota.h Filtro.h FiltroPracticas.cpp FiltroPracticas.h FiltroTeoria.cpp FiltroTeoria.h Notas.cpp Notas.h GestorFiltros.cpp GestorFiltros.h CadenaFiltros.cpp CadenaFiltros.h)
+add_executable(P1S3 main.cpp Nota.cpp include/Nota.h include/TipoNota.h include/Filtro.h FiltroPracticas.cpp include/FiltroPracticas.h FiltroTeoria.cpp include/FiltroTeoria.h Notas.cpp include/Notas.h GestorFiltros.cpp include/GestorFiltros.h CadenaFiltros.cpp include/CadenaFiltros.h ObjetivoVerNotas.cpp include/ObjetivoVerNotas.h)
