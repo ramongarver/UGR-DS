@@ -1,0 +1,3 @@
+enum TipoNota {
+  teoria, practicas
+}
