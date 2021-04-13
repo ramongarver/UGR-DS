@@ -3,9 +3,9 @@ import 'notas.dart';
 import 'tipo_nota.dart';
 
 class FiltroPracticas extends Filtro {
-  double _coeficientePracticas;
+  double coeficientePracticas;
 
-  FiltroPracticas([this._coeficientePracticas = 0.3]);
+  FiltroPracticas([this.coeficientePracticas = 0.3]);
 
   void ejecutar(Notas notas) {
     var sizePracticas = 0;
@@ -19,7 +19,8 @@ class FiltroPracticas extends Filtro {
     for(int i = 0; i < notas.size; i++) {
       final n = notas.getNota(i);
       if(n.tipoNota == TipoNota.practicas) {
-        n.pesoFinal = n.nota * _coeficientePracticas / sizePracticas;
+        n.pesoFinal = n.nota * coeficientePracticas / sizePracticas;
+        n.maximoPesoFinal = coeficientePracticas / sizePracticas;
       }
     }
   }
