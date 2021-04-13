@@ -1,4 +1,4 @@
-#include "include/FiltroTeoria.h"
+#include "FiltroTeoria.h"
 
 void FiltroTeoria::ejecutar(Notas &notas) const {
     size_t size_teoria = 0;

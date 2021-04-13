@@ -3,9 +3,9 @@
 #include <chrono>
 #include <thread>
 #include <random>
-#include "include/GestorFiltros.h"
-#include "include/FiltroTeoria.h"
-#include "include/FiltroPracticas.h"
+#include "GestorFiltros.h"
+#include "FiltroTeoria.h"
+#include "FiltroPracticas.h"
 
 // Para que no de warning el bucle while(true)
 #pragma clang diagnostic push

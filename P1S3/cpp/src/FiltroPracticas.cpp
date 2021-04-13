@@ -1,4 +1,4 @@
-#include "include/FiltroPracticas.h"
+#include "FiltroPracticas.h"
 
 void FiltroPracticas::ejecutar(Notas &notas) const {
     size_t size_practicas = 0;

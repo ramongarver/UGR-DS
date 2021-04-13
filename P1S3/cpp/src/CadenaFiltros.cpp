@@ -1,4 +1,4 @@
-#include "include/CadenaFiltros.h"
+#include "CadenaFiltros.h"
 
 void CadenaFiltros::ejecutar(Notas &notas) {
     for(const std::reference_wrapper<Filtro>& f : cadenaFiltros) {

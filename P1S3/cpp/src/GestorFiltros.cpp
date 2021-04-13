@@ -1,4 +1,4 @@
-#include "include/GestorFiltros.h"
+#include "GestorFiltros.h"
 
 
 void GestorFiltros::peticionFiltros(TipoNota t, double n) {

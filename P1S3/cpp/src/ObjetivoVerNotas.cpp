@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "include/ObjetivoVerNotas.h"
+#include "ObjetivoVerNotas.h"
 
 void ObjetivoVerNotas::ejecutar(Notas& notas) {
     finalTeoria = calcularFinal(notas, TipoNota::teoria);
