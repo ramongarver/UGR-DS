@@ -10,6 +10,7 @@ class FiltroTeoria : public Filtro {
 public:
     explicit FiltroTeoria(double coeficienteTeoria = 0.6) : coeficienteTeoria(coeficienteTeoria) {}
 
+    double getCoeficiente() const { return coeficienteTeoria; }
     void ejecutar(Notas &notas) const override;
 };
 

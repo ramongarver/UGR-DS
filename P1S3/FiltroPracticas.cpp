@@ -12,6 +12,7 @@ void FiltroPracticas::ejecutar(Notas &notas) const {
         Nota &n = notas.getNota(i);
         if (n.getTipoNota() == TipoNota::practicas) {
             n.setPesoFinal(n.getNota() * coeficientePracticas / static_cast<double>(size_practicas));
+            n.setMaximoPesoFinal(coeficientePracticas / static_cast<double>(size_practicas));
         }
     }
 }

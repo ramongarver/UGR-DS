@@ -9,10 +9,10 @@
 #include "Notas.h"
 
 class ObjetivoVerNotas {
-    double finalTeoria = 0.0;
-    double finalPracticas = 0.0;
-    double finalTotal = 0.0;
-    static double calcularFinal(Notas&, TipoNota);
+    std::pair<double,double> finalTeoria = std::make_pair(0.0, 0.0);
+    std::pair<double,double> finalPracticas = std::make_pair(0.0, 0.0);
+    std::pair<double,double> finalTotal = std::make_pair(0.0, 0.0);
+    static std::pair<double,double> calcularFinal(Notas&, TipoNota);
 
 public:
     void ejecutar(Notas&);

@@ -12,6 +12,7 @@ void FiltroTeoria::ejecutar(Notas &notas) const {
         Nota &n = notas.getNota(i);
         if (n.getTipoNota() == TipoNota::teoria) {
             n.setPesoFinal(n.getNota() * coeficienteTeoria / static_cast<double>(size_teoria));
+            n.setMaximoPesoFinal(coeficienteTeoria / static_cast<double>(size_teoria));
         }
     }
 }
