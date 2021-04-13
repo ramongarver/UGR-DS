@@ -3,10 +3,9 @@ import 'notas.dart';
 import 'tipo_nota.dart';
 
 class ObjetivoVerNotas {
-  double finalTeoria = 0.0;
-  double finalPracticas = 0.0;
-  double finalTotal = 0.0;
-  double maximoFinalTotal = 0.0;
+  Map _finalTeoria = {'notaFinal' : 0.0, 'maximaFinal' : 0.0};
+  Map _finalPracticas = {'notaFinal' : 0.0, 'maximaFinal' : 0.0};
+  Map _finalTotal = {'notaFinal' : 0.0, 'maximaFinal' : 0.0};
 
   Map _calcularFinal(Notas notas, TipoNota tipoNota) {
     double notaFinal = 0.0;
@@ -19,24 +18,23 @@ class ObjetivoVerNotas {
         notaFinal += n.pesoFinal;
         maximaFinal += n.maximoPesoFinal;
       }
-
     }
     
     return {'notaFinal' : notaFinal, 'maximaFinal' : maximaFinal};
   }
 
   void ejecutar(Notas notas) {
-    final finalTeoria = _calcularFinal(notas, TipoNota.teoria);
-    final finalPracticas = _calcularFinal(notas, TipoNota.practicas);
-    finalTotal = finalPracticas['notaFinal'] + finalTeoria['notaFinal'];
-    maximoFinalTotal = finalPracticas['maximaFinal'] + finalTeoria['maximaFinal'];
+    _finalTeoria = _calcularFinal(notas, TipoNota.teoria);
+    _finalPracticas = _calcularFinal(notas, TipoNota.practicas);
+    _finalTotal['notaFinal'] = _finalPracticas['notaFinal'] + _finalTeoria['notaFinal'];
+    _finalTotal['maximaFinal'] = _finalPracticas['maximaFinal'] + _finalTeoria['maximaFinal'];
 
-    print("Final teoría: ${finalTeoria['notaFinal'].toStringAsFixed(2)}"
-        "/ ${(finalTeoria['maximaFinal'] * 10).toStringAsFixed(2)} ");
-    print("Final prácticas: ${finalPracticas['notaFinal'].toStringAsFixed(2)} "
-        "/ ${(finalPracticas['maximaFinal'] * 10).toStringAsFixed(2)}");
+    print("Final teoría: ${_finalTeoria['notaFinal'].toStringAsFixed(2)}"
+        "/ ${(_finalTeoria['maximaFinal'] * 10).toStringAsFixed(2)} ");
+    print("Final prácticas: ${_finalPracticas['notaFinal'].toStringAsFixed(2)} "
+        "/ ${(_finalPracticas['maximaFinal'] * 10).toStringAsFixed(2)}");
     print("------------------------------------");
-    print("Final total: ${finalTotal.toStringAsFixed(2)} "
-        "/ ${(maximoFinalTotal * 10).toStringAsFixed(2)}\n");
+    print("Final total: ${_finalTotal['notaFinal'].toStringAsFixed(2)} "
+        "/ ${(_finalTotal['maximaFinal'] * 10).toStringAsFixed(2)}\n");
   }
 }
