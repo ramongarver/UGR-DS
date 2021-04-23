@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a650c58-5db6-43df-872b-086ea09fa0d7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/java/CalculadoraExtremos.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/ControlNotas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/GeneradorMedias.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/Nota.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/Notas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/PanelExtremos.form" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/PanelExtremos.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/PanelMedia.form" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/PanelMedia.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/PanelTablaNotas.form" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/PanelTablaNotas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java/TablaNotas.java" beforeDir="false" />
+    <list default="true" id="5a650c58-5db6-43df-872b-086ea09fa0d7" name="Default Changelist" comment="Arreglada configuración P1S1 (2)">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/P1S1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../P1S2/ruby/.idea/ruby.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../P1S3/.idea/P1S3.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../P1S3/cpp/.idea/P1S32.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../P1S3/cpp/.idea/cpp.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../P1S3/dart/.idea/dart.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/Aula.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/AulaPracticas.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/AulaTeoria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/Docencia.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/FactoriaDocencia.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/FactoriaPracticas.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/FactoriaTeoria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/Grupo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/GrupoPracticas.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/GrupoTeoria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/HebraPracticas.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/HebraTeoria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../P1S2/java/Ordenador.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +45,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
@@ -73,8 +83,23 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1618320642942</updated>
-      <workItem from="1618320645690" duration="350000" />
+      <workItem from="1618320645690" duration="884000" />
     </task>
+    <task id="LOCAL-00001" summary="Arreglada configuración P1S1">
+      <created>1618321072455</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1618321072455</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Arreglada configuración P1S1 (2)">
+      <created>1618321124262</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1618321124262</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -90,5 +115,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Arreglada configuración P1S1" />
+    <MESSAGE value="Arreglada configuración P1S1 (2)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Arreglada configuración P1S1 (2)" />
   </component>
 </project>

@@ -1,0 +1,3 @@
+/mnt/c/Users/danip/OneDrive/Documentos/UGR/3/DS/UGR-DS/P1S3/cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/danip/OneDrive/Documentos/UGR/3/DS/UGR-DS/P1S3/cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/danip/OneDrive/Documentos/UGR/3/DS/UGR-DS/P1S3/cpp/cmake-build-debug/CMakeFiles/P1S3.dir

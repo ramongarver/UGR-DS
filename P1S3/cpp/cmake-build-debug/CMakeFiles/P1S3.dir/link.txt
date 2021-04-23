@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/P1S3.dir/src/main.o CMakeFiles/P1S3.dir/src/Nota.o CMakeFiles/P1S3.dir/src/FiltroPracticas.o CMakeFiles/P1S3.dir/src/FiltroTeoria.o CMakeFiles/P1S3.dir/src/Notas.o CMakeFiles/P1S3.dir/src/GestorFiltros.o CMakeFiles/P1S3.dir/src/CadenaFiltros.o CMakeFiles/P1S3.dir/src/ObjetivoVerNotas.o  -o P1S3 
