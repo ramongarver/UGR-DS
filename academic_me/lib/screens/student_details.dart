@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:academic_me/models/mark.dart';
 import 'package:academic_me/models/student.dart';
 import 'package:academic_me/screens/dialog_add_student_mark.dart';
+import 'package:flutter/services.dart';
+import 'package:email_validator/email_validator.dart';
 
 class StudentDetails extends StatefulWidget {
   final Student _student;
@@ -39,7 +41,7 @@ class _StudentDetailsState extends State<StudentDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget._student.name),
+          title: Text(widget._student.completeName),
           actions: [
             IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
           ],
@@ -98,13 +100,13 @@ class _StudentDetailsState extends State<StudentDetails> {
                   SizedBox(height: 16.0),
                   TextFormField(
                     initialValue: _phone,
-                    textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       filled: true,
                       prefixIcon: Icon(Icons.phone_iphone),
                       hintText: 'Teléfono del alumno',
                       labelText: 'Teléfono',
                     ),
+                    keyboardType: TextInputType.phone,
                     onChanged: (value) {
                       setState(() => _phone = value);
                     },
@@ -118,33 +120,32 @@ class _StudentDetailsState extends State<StudentDetails> {
                   SizedBox(height: 16.0),
                   TextFormField(
                     initialValue: _email,
-                    textCapitalization: TextCapitalization.words,
+                    textCapitalization: TextCapitalization.none,
                     decoration: InputDecoration(
                       filled: true,
                       prefixIcon: Icon(Icons.email),
                       hintText: 'Email del alumno',
                       labelText: 'Email',
                     ),
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (value) {
                       setState(() => _email = value);
                     },
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'El email está vacío';
-                      }
-                      return null;
-                    },
+                    validator: (value) => EmailValidator.validate(value)
+                        ? null
+                        : "Email no válido",
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
                     initialValue: _address,
-                    textCapitalization: TextCapitalization.words,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                       filled: true,
                       prefixIcon: Icon(Icons.home),
                       hintText: 'Dirección del alumno',
                       labelText: 'Dirección',
                     ),
+                    keyboardType: TextInputType.streetAddress,
                     onChanged: (value) {
                       setState(() => _address = value);
                     },
@@ -184,11 +185,11 @@ class _StudentDetailsState extends State<StudentDetails> {
               widget._student.id, _name, _surname, _phone, _email, _address)
           .then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Se han guardado los cambios")));
-        Navigator.of(context).pop();
+            SnackBar(content: Text("Estudiante modificado correctamente")));
+        Navigator.of(context).pop(true);
       }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error al intentar modificar examen")));
+            SnackBar(content: Text("Error al intentar modificar estudiante")));
       });
     }
   }
@@ -230,13 +231,18 @@ class _StudentDetailsState extends State<StudentDetails> {
 
   void _pushAddMark() {
     Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+        .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddStudentMark(widget._student);
-    })).then((value) => setState(() {}));
+    })).then((added) {
+      if (added)
+        setState(() {
+          widget._student.updateMarks();
+        });
+    });
   }
 
   Future<void> _showRemoveMarkDialog(Mark mark) async {
-    return showDialog<void>(
+    return showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -254,18 +260,25 @@ class _StudentDetailsState extends State<StudentDetails> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                Mark.deleteMark(mark.id)
-                    .then((value) => Navigator.of(context).pop())
-                    .catchError((e) {
+                Mark.deleteMark(mark.id).then((value) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error al intentar borrar nota")));
+                      SnackBar(content: Text("Nota eliminada correctamente")));
+                  Navigator.of(context).pop(true);
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Error al intentar eliminar nota")));
                 });
               },
             ),
           ],
         );
       },
-    ).then((value) => setState(() {}));
+    ).then((deleted) {
+      if (deleted)
+        setState(() {
+          widget._student.updateMarks();
+        });
+    });
   }
 }
 

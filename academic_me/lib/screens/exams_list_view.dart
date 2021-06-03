@@ -25,7 +25,7 @@ class _ExamsListViewState extends State<ExamsListView> {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
               final filtered = snapshot.data.exams
-                  .where((exam) => exam.id == widget._subject.id);
+                  .where((exam) => exam.subjectId == widget._subject.id);
               final tiles = filtered.map(
                 (Exam exam) {
                   return ListTile(
@@ -37,10 +37,12 @@ class _ExamsListViewState extends State<ExamsListView> {
                         _showRemoveDialog(exam);
                       },
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute<void>(
+                        Navigator.of(context).push(MaterialPageRoute<bool>(
                             builder: (BuildContext context) {
                           return ExamDetails(exam);
-                        })).then((value) => setState(() {}));
+                        })).then((changed) {
+                          if (changed) setState(() {});
+                        });
                       });
                 },
               );
@@ -57,7 +59,7 @@ class _ExamsListViewState extends State<ExamsListView> {
   }
 
   Future<void> _showRemoveDialog(Exam exam) async {
-    return showDialog<void>(
+    return showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -74,26 +76,31 @@ class _ExamsListViewState extends State<ExamsListView> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                Exam.deleteExam(exam.id)
-                    .then((value) => Navigator.of(context).pop())
-                    .catchError((e) {
+                Exam.deleteExam(exam.id).then((value) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Error al intentar borrar examen")));
+                      content: Text("Examen eliminado correctamente")));
+                  Navigator.of(context).pop(true);
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Error al intentar eliminar examen")));
                 });
               },
             ),
           ],
         );
       },
-    ).then((value) => setState(() {}));
-    // TODO: Comprobar si recarga la página si se cancela
+    ).then((deleted) {
+      if (deleted) setState(() {});
+    });
   }
 
   void _pushAddExam() {
     Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+        .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddExam(widget._subject);
-    })).then((val) => setState(() {}));
+    })).then((added) {
+      if (added) setState(() {});
+    });
   }
 
   @override

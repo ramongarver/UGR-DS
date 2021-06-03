@@ -20,7 +20,14 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
     with AfterLayoutMixin<DialogAddStudentMark> {
   double _grade;
   Exam _exam;
+  Future<List<DropdownMenuItem<Exam>>> _examsList;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _examsList = _getExamsList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,7 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         FutureBuilder<List<DropdownMenuItem<Exam>>>(
-                            future: _getExamsList(),
+                            future: _examsList,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
@@ -86,7 +93,8 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
                                   double.parse(value.replaceFirst(",", "."));
                             });
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
                           inputFormatters: <TextInputFormatter>[
                             // only decimal or natural numbers
                             FilteringTextInputFormatter.allow(
@@ -109,8 +117,7 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
   }
 
   void showSnackbarIfNothingToAdd() {
-    _getExamsList().then((list) {
-      // TODO: Esto hay que cambiarlo para que no haga las dos peticiones!
+    _examsList.then((list) {
       if (list.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -121,9 +128,11 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      Mark.createMark(widget._student.id, _exam.id, _grade, "")
-          .then((value) => () => Navigator.of(context).pop())
-          .catchError((e) {
+      Mark.createMark(widget._student.id, _exam.id, _grade, "").then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Nota añadida correctamente")));
+        Navigator.of(context).pop(true);
+      }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir nota")));
       });

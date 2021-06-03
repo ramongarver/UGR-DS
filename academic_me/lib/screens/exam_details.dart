@@ -121,8 +121,8 @@ class _ExamDetailsState extends State<ExamDetails> {
     if (_formKey.currentState.validate()) {
       Exam.updateExam(widget._exam.id, _name, _date).then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Se han guardado los cambios")));
-        Navigator.of(context).pop();
+            SnackBar(content: Text("Examen modificado correctamente")));
+        Navigator.of(context).pop(true);
       }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar modificar examen")));
@@ -140,7 +140,7 @@ class _ExamDetailsState extends State<ExamDetails> {
                 (Mark mark) {
                   return ListTile(
                       title: Text(
-                        "${mark.student.name} ${mark.student.surname}",
+                        mark.student.completeName,
                         style: _biggerFont,
                       ),
                       trailing: Text(mark.grade.toString()),
@@ -167,20 +167,25 @@ class _ExamDetailsState extends State<ExamDetails> {
 
   void _pushAddMark() {
     Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+        .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddExamMark(widget._exam);
-    })).then((value) => setState(() {}));
+    })).then((added) {
+      if (added)
+        setState(() {
+          widget._exam.updateMarks();
+        });
+    });
   }
 
   Future<void> _showRemoveMarkDialog(Mark mark) async {
-    return showDialog<Future<Mark>>(
+    return showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmar eliminación'),
           content: Text(
-              '¿Quieres eliminar la nota del estudiante ${mark.student.name + mark.student.surname}?'),
+              '¿Quieres eliminar la nota del estudiante ${mark.student.completeName}?'),
           actions: <Widget>[
             ElevatedButton(
               child: Text('Cancelar'),
@@ -191,18 +196,25 @@ class _ExamDetailsState extends State<ExamDetails> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                Mark.deleteMark(mark.id)
-                    .then((value) => Navigator.of(context).pop())
-                    .catchError((e) {
+                Mark.deleteMark(mark.id).then((value) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error al intentar borrar nota")));
+                      SnackBar(content: Text("Nota eliminada correctamente")));
+                  Navigator.of(context).pop(true);
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Error al intentar eliminar nota")));
                 });
               },
             ),
           ],
         );
       },
-    ).then((value) => setState(() {}));
+    ).then((deleted) {
+      if (deleted)
+        setState(() {
+          widget._exam.updateMarks();
+        });
+    });
   }
 }
 

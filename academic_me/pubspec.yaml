@@ -36,6 +36,8 @@ dependencies:
 
   # Datatime Picker
   flutter_datetime_picker: ^1.5.1
+  
+  email_validator: '^1.0.6'
 
 dev_dependencies:
   integration_test:

@@ -37,6 +37,19 @@ class Student {
     return Marks.getMarksStudent(id);
   }
 
+  void updateMarks() {
+    _marks = null;
+    _getMarksFromAPI().then((value) async {
+      _marks = value;
+      final exams = await Exams.getExams();
+      _marks.forEach((m) {
+        m.exam = exams.exams.singleWhere((e) => e.id == m.examId);
+      });
+    });
+  }
+
+  String get completeName => "$name $surname";
+
   Future<double> get mean async {
     final waitedMarks = await marks;
     if (waitedMarks.isEmpty)
@@ -87,7 +100,7 @@ class Student {
       String phone, String email, String address) async {
     final response = await http.post(
       Uri.https(
-          Credentials.baseAddress, Credentials.applicationName + _tablePath + 'new'),
+          Credentials.baseAddress, Credentials.applicationName + _tablePath),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'authorization': Credentials.basicAuth
@@ -98,6 +111,7 @@ class Student {
         'phone': phone,
         'email': email,
         'address': address,
+        'pass': Credentials.password
       }),
     );
     if (response.statusCode == 201)
@@ -108,7 +122,7 @@ class Student {
 
 //////////// delete //////////////////
 
-  static Future<Student> deleteStudent(int id) async {
+  static Future<void> deleteStudent(int id) async {
     final http.Response response = await http.delete(
       Uri.https(Credentials.baseAddress,
           Credentials.applicationName + _tablePath + id.toString()),
@@ -118,7 +132,7 @@ class Student {
       },
     );
     if (response.statusCode == 200)
-      return Student.fromJson(jsonDecode(response.body));
+      return;
     else
       throw Exception('Failed to delete student.');
   }
@@ -142,7 +156,7 @@ class Student {
         'address': address,
       }),
     );
-    if (response.statusCode == 201)
+    if (response.statusCode == 200)
       return Student.fromJson(jsonDecode(response.body));
     else
       throw Exception('Failed to update student');

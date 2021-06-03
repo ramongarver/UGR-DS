@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:academic_me/models/student.dart';
+import 'package:email_validator/email_validator.dart';
 
 class DialogAddStudent extends StatefulWidget {
   @override
@@ -71,13 +72,16 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
-                          textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
                             filled: true,
                             prefixIcon: Icon(Icons.phone_iphone),
                             hintText: 'Teléfono del alumno',
                             labelText: 'Teléfono',
                           ),
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           onChanged: (value) {
                             setState(() => _phone = value);
                           },
@@ -90,7 +94,7 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
-                          textCapitalization: TextCapitalization.words,
+                          textCapitalization: TextCapitalization.none,
                           decoration: InputDecoration(
                             filled: true,
                             prefixIcon: Icon(Icons.email),
@@ -100,22 +104,21 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
                           onChanged: (value) {
                             setState(() => _email = value);
                           },
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return 'El email está vacío';
-                            }
-                            return null;
-                          },
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) => EmailValidator.validate(value)
+                              ? null
+                              : "Email no válido",
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
-                          textCapitalization: TextCapitalization.words,
+                          textCapitalization: TextCapitalization.sentences,
                           decoration: InputDecoration(
                             filled: true,
                             prefixIcon: Icon(Icons.home),
                             hintText: 'Dirección del alumno',
                             labelText: 'Dirección',
                           ),
+                          keyboardType: TextInputType.streetAddress,
                           onChanged: (value) {
                             setState(() => _address = value);
                           },
@@ -133,8 +136,11 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
       Student.createStudent(_name, _surname, _phone, _email, _address)
-          .then((value) => Navigator.of(context).pop())
-          .catchError((e) {
+          .then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Estudiante añadido correctamente")));
+        Navigator.of(context).pop(true);
+      }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir estudiante")));
       });

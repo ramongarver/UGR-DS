@@ -24,18 +24,19 @@ class _StudentsListViewState extends State<StudentsListView> {
                 (Student student) {
                   return ListTile(
                       title: Text(
-                        "${student.name} ${student.surname}",
+                        student.completeName,
                         style: _biggerFont,
                       ),
                       onLongPress: () {
                         _showRemoveDialog(student);
                       },
                       onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute<Future<Student>>(
-                                builder: (BuildContext context) {
+                        Navigator.of(context).push(MaterialPageRoute<bool>(
+                            builder: (BuildContext context) {
                           return StudentDetails(student);
-                        })).then((value) => setState(() {}));
+                        })).then((edited) {
+                          if (edited) setState(() {});
+                        });
                       });
                 },
               );
@@ -52,7 +53,7 @@ class _StudentsListViewState extends State<StudentsListView> {
   }
 
   Future<void> _showRemoveDialog(Student student) async {
-    return showDialog<void>(
+    return showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -69,25 +70,31 @@ class _StudentsListViewState extends State<StudentsListView> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                Student.deleteStudent(student.id)
-                    .then((value) => Navigator.of(context).pop())
-                    .catchError((e) {
+                Student.deleteStudent(student.id).then((value) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Error al intentar borrar estudiante")));
+                      content: Text("Estudiante eliminado correctamente")));
+                  Navigator.of(context).pop(true);
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Error al intentar eliminar estudiante")));
                 });
               },
             ),
           ],
         );
       },
-    ).then((value) => setState(() {}));
+    ).then((deleted) {
+      if (deleted) setState(() {});
+    });
   }
 
   void _pushAddStudent() {
-    Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddStudent();
-    })).then((val) => setState(() {}));
+    })).then((added) {
+      if (added) setState(() {});
+    });
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'package:academic_me/models/exam.dart';
 import 'package:flutter/material.dart';
 
 import 'package:academic_me/models/subject.dart';
@@ -33,10 +32,10 @@ class _SubjectsListViewState extends State<SubjectsListView> {
                         _showRemoveDialog(subject);
                       },
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute<Future<Exam>>(
+                        Navigator.of(context).push(MaterialPageRoute<void>(
                             builder: (BuildContext context) {
                           return ExamsListView(subject);
-                        })).then((f) => f.then((exam) => setState(() {})));
+                        }));
                       });
                 },
               );
@@ -53,7 +52,7 @@ class _SubjectsListViewState extends State<SubjectsListView> {
   }
 
   Future<void> _showRemoveDialog(Subject subject) async {
-    return showDialog<Future<Subject>>(
+    return showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -70,21 +69,31 @@ class _SubjectsListViewState extends State<SubjectsListView> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                Future<Subject> future = Subject.deleteSubject(subject.id);
-                Navigator.of(context).pop(future);
+                Subject.deleteSubject(subject.id).then((value) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Asignatura eliminada correctamente")));
+                  Navigator.of(context).pop(true);
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Error al intentar eliminar asignatura")));
+                });
               },
             ),
           ],
         );
       },
-    ).then((f) => f.then((subject) => setState(() {})));
+    ).then((deleted) {
+      if (deleted) setState(() {});
+    });
   }
 
   void _pushAddSubject() {
-    Navigator.of(context).push(
-        MaterialPageRoute<Future<Subject>>(builder: (BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddSubject();
-    })).then((f) => f.then((subject) => setState(() {})));
+    })).then((added) {
+      if (added) setState(() {});
+    });
   }
 
   @override

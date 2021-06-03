@@ -20,7 +20,14 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
     with AfterLayoutMixin<DialogAddExamMark> {
   double _grade;
   Student _student;
+  Future<List<DropdownMenuItem<Student>>> _studentsList;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _studentsList = _getStudentsList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,7 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         FutureBuilder<List<DropdownMenuItem<Student>>>(
-                            future: _getStudentsList(),
+                            future: _studentsList,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
@@ -86,7 +93,8 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
                                   double.parse(value.replaceFirst(",", "."));
                             });
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
                           inputFormatters: <TextInputFormatter>[
                             // only decimal or natural numbers
                             FilteringTextInputFormatter.allow(
@@ -109,8 +117,7 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
   }
 
   void showSnackbarIfNothingToAdd() {
-    _getStudentsList().then((list) {
-      // TODO: Esto hay que cambiarlo para que no haga las dos peticiones!
+    _studentsList.then((list) {
       if (list.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -121,9 +128,11 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      Mark.createMark(_student.id, widget._exam.id, _grade, "")
-          .then((value) => Navigator.of(context).pop())
-          .catchError((e) {
+      Mark.createMark(_student.id, widget._exam.id, _grade, "").then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Nota añadida correctamente")));
+        Navigator.of(context).pop(true);
+      }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir nota")));
       });
@@ -142,7 +151,7 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
 
     return notEvaluatedStudents
         .map((student) => DropdownMenuItem<Student>(
-            child: Text(student.name), value: student))
+            child: Text(student.completeName), value: student))
         .toList();
   }
 }

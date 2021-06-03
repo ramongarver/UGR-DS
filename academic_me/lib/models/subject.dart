@@ -38,7 +38,7 @@ class Subject {
   static Future<Subject> createSubject(String name, int professorId) async {
     final response = await http.post(
       Uri.https(
-          Credentials.baseAddress, Credentials.applicationName + _tablePath + 'new'),
+          Credentials.baseAddress, Credentials.applicationName + _tablePath),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'authorization': Credentials.basicAuth
@@ -54,7 +54,7 @@ class Subject {
 
 //////////// delete //////////////////
 
-  static Future<Subject> deleteSubject(int id) async {
+  static Future<void> deleteSubject(int id) async {
     final http.Response response = await http.delete(
       Uri.https(Credentials.baseAddress,
         Credentials.applicationName + _tablePath + id.toString()),
@@ -64,7 +64,7 @@ class Subject {
       },
     );
     if (response.statusCode == 200)
-      return Subject.fromJson(jsonDecode(response.body));
+      return;
     else
       throw Exception('Failed to delete subject.');
   }
@@ -83,7 +83,7 @@ class Subject {
       body: jsonEncode(
           <String, dynamic>{'name': name, 'professor_id': professorId}),
     );
-    if (response.statusCode == 201)
+    if (response.statusCode == 200)
       return Subject.fromJson(jsonDecode(response.body));
     else
       throw Exception('Failed to update subject');

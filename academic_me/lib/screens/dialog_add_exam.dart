@@ -86,10 +86,13 @@ class _DialogAddExamState extends State<DialogAddExam> {
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
       Exam.createExam(_name, _date, widget._subject.id)
-          .then((value) => () => Navigator.of(context).pop())
-          .catchError((e) {
+          .then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error al intentar añadir nota")));
+            SnackBar(content: Text("Examen añadido correctamente")));
+        Navigator.of(context).pop(true);
+      }).catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar añadir examen")));
       });
     }
   }

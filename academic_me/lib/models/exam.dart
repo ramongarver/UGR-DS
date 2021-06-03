@@ -15,7 +15,7 @@ class Exam {
   final int subjectId;
   Iterable<Mark> _marks;
 
-  static String _tablePath = "subjects/";
+  static String _tablePath = "exams/";
 
   static final idProfesorSiempre = 1;
 
@@ -35,6 +35,17 @@ class Exam {
 
   Future<Iterable<Mark>> _getMarksFromAPI() {
     return Marks.getMarksExam(id);
+  }
+
+  void updateMarks() {
+    _marks = null;
+    _getMarksFromAPI().then((value) async {
+      _marks = value;
+      final students = await Students.getStudents();
+      _marks.forEach((m) {
+        m.student = students.students.singleWhere((e) => e.id == m.studentId);
+      });
+    });
   }
 
   Future<double> get mean async {
@@ -88,7 +99,7 @@ class Exam {
       String name, DateTime date, int subjectId) async {
     final response = await http.post(
       Uri.https(
-          Credentials.baseAddress, Credentials.applicationName + _tablePath + 'new'),
+          Credentials.baseAddress, Credentials.applicationName + _tablePath),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'authorization': Credentials.basicAuth
@@ -107,7 +118,7 @@ class Exam {
 
 //////////// delete //////////////////
 
-  static Future<Exam> deleteExam(int id) async {
+  static Future<void> deleteExam(int id) async {
     final http.Response response = await http.delete(
       Uri.https(Credentials.baseAddress,
           Credentials.applicationName + _tablePath + id.toString()),
@@ -117,7 +128,7 @@ class Exam {
       },
     );
     if (response.statusCode == 200)
-      return Exam.fromJson(jsonDecode(response.body));
+      return;
     else
       throw Exception('Failed to delete exam.');
   }
@@ -137,7 +148,7 @@ class Exam {
         'date': DateFormat('yyyy-MM-dd').format(date)
       }),
     );
-    if (response.statusCode == 201)
+    if (response.statusCode == 200)
       return Exam.fromJson(jsonDecode(response.body));
     else
       throw Exception('Failed to update exam');

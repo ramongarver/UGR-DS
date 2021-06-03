@@ -27,7 +27,7 @@ class Mark {
       : id = json['id'],
         studentId = json['student_id'],
         examId = json['exam_id'],
-        grade = json['note'] / 10.0,
+        grade = json['nota'] / 10.0,
         urlPhoto = json['photo'] {
     if (withExam) {
       exam = exams.exams.singleWhere((e) => e.id == examId);
@@ -54,7 +54,7 @@ class Mark {
       int studentId, int examId, double grade, String urlPhoto) async {
     final response = await http.post(
       Uri.https(
-          Credentials.baseAddress, Credentials.applicationName + _tablePath + 'new'),
+          Credentials.baseAddress, Credentials.applicationName + _tablePath),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'authorization': Credentials.basicAuth
@@ -62,7 +62,7 @@ class Mark {
       body: jsonEncode(<String, dynamic>{
         'student_id': studentId,
         'exam_id': examId,
-        'note': (grade * 10).toInt(),
+        'nota': (grade * 10).toInt(),
         'photo': urlPhoto
       }),
     );
@@ -74,7 +74,7 @@ class Mark {
 
 //////////// delete //////////////////
 
-  static Future<Mark> deleteMark(int id) async {
+  static Future<void> deleteMark(int id) async {
     final http.Response response = await http.delete(
       Uri.https(Credentials.baseAddress,
           Credentials.applicationName + _tablePath + id.toString()),
@@ -84,7 +84,7 @@ class Mark {
       },
     );
     if (response.statusCode == 200)
-      return Mark.fromJson(jsonDecode(response.body), false, false, null, null);
+      return;
     else
       throw Exception('Failed to delete mark.');
   }
@@ -100,9 +100,9 @@ class Mark {
         'authorization': Credentials.basicAuth
       },
       body: jsonEncode(
-          <String, dynamic>{'note': (grade * 10).toInt(), 'photo': urlPhoto}),
+          <String, dynamic>{'nota': (grade * 10).toInt(), 'photo': urlPhoto}),
     );
-    if (response.statusCode == 201)
+    if (response.statusCode == 200)
       return Mark.fromJson(jsonDecode(response.body), false, false, null, null);
     else
       throw Exception('Failed to update mark');

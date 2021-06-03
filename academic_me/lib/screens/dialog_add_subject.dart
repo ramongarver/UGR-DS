@@ -55,8 +55,11 @@ class _DialogAddSubjectState extends State<DialogAddSubject> {
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
       Subject.createSubject(_name, Subject.idProfesorSiempre)
-          .then((value) => Navigator.of(context).pop())
-          .catchError((e) {
+          .then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Asignatura añadida correctamente")));
+        Navigator.of(context).pop(true);
+      }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir asignatura")));
       });
