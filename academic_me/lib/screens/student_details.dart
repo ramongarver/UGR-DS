@@ -4,14 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:academic_me/models/mark.dart';
 import 'package:academic_me/models/student.dart';
-import 'package:academic_me/models/teaching.dart';
 import 'package:academic_me/screens/dialog_add_student_mark.dart';
 
 class StudentDetails extends StatefulWidget {
   final Student _student;
-  final Teaching _teaching;
 
-  StudentDetails(this._student, this._teaching, {Key key}) : super(key: key);
+  StudentDetails(this._student, {Key key}) : super(key: key);
 
   @override
   _StudentDetailsState createState() => _StudentDetailsState();
@@ -19,7 +17,10 @@ class StudentDetails extends StatefulWidget {
 
 class _StudentDetailsState extends State<StudentDetails> {
   String _name;
-  String _lastName;
+  String _surname;
+  String _phone;
+  String _email;
+  String _address;
   final _biggerFont = TextStyle(fontSize: 18.0);
   final _formKey = GlobalKey<FormState>();
   final decimalPlaces = 2; // decimal places for displaying marks
@@ -28,7 +29,10 @@ class _StudentDetailsState extends State<StudentDetails> {
   void initState() {
     super.initState();
     _name = widget._student.name;
-    _lastName = widget._student.lastName;
+    _surname = widget._student.surname;
+    _phone = widget._student.phone;
+    _email = widget._student.email;
+    _address = widget._student.address;
   }
 
   @override
@@ -50,36 +54,20 @@ class _StudentDetailsState extends State<StudentDetails> {
           SizedBox(height: 10.0),
           Form(
               key: _formKey,
-              child:
-                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: TextFormField(
-                    initialValue: widget._student.id.toString(),
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.tag),
-                      hintText: 'ID del alumno:',
-                      labelText: 'ID',
-                    ),
-                    enabled: false,
-                  ),
-                ),
-                SizedBox(height: 10.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: TextFormField(
-                    initialValue: widget._student.name,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    initialValue: _name,
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       filled: true,
                       prefixIcon: Icon(Icons.person),
-                      labelText: 'Nombre del estudiante',
+                      hintText: 'Nombre del alumno',
+                      labelText: 'Nombre',
                     ),
                     onChanged: (value) {
-                      setState(() {
-                        _name = value;
-                      }); // todo cambiar nombre
+                      setState(() => _name = value);
                     },
                     validator: (text) {
                       if (text == null || text.isEmpty) {
@@ -88,12 +76,9 @@ class _StudentDetailsState extends State<StudentDetails> {
                       return null;
                     },
                   ),
-                ),
-                SizedBox(height: 10.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: TextFormField(
-                    initialValue: widget._student.lastName,
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: _surname,
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       filled: true,
@@ -101,9 +86,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       labelText: 'Apellido(s)',
                     ),
                     onChanged: (value) {
-                      setState(() {
-                        _lastName = value;
-                      }); // todo cambiar nombre
+                      setState(() => _surname = value);
                     },
                     validator: (text) {
                       if (text == null || text.isEmpty) {
@@ -112,9 +95,68 @@ class _StudentDetailsState extends State<StudentDetails> {
                       return null;
                     },
                   ),
-                ),
-                // TODO: Más atributos para estudiante (?)
-              ])),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: _phone,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: InputDecoration(
+                      filled: true,
+                      prefixIcon: Icon(Icons.phone_iphone),
+                      hintText: 'Teléfono del alumno',
+                      labelText: 'Teléfono',
+                    ),
+                    onChanged: (value) {
+                      setState(() => _phone = value);
+                    },
+                    validator: (text) {
+                      if (text == null || text.isEmpty) {
+                        return 'El teléfono está vacío';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: _email,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: InputDecoration(
+                      filled: true,
+                      prefixIcon: Icon(Icons.email),
+                      hintText: 'Email del alumno',
+                      labelText: 'Email',
+                    ),
+                    onChanged: (value) {
+                      setState(() => _email = value);
+                    },
+                    validator: (text) {
+                      if (text == null || text.isEmpty) {
+                        return 'El email está vacío';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: _address,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: InputDecoration(
+                      filled: true,
+                      prefixIcon: Icon(Icons.home),
+                      hintText: 'Dirección del alumno',
+                      labelText: 'Dirección',
+                    ),
+                    onChanged: (value) {
+                      setState(() => _address = value);
+                    },
+                    validator: (text) {
+                      if (text == null || text.isEmpty) {
+                        return 'La dirección está vacía';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              )),
           SizedBox(height: 30.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -131,54 +173,65 @@ class _StudentDetailsState extends State<StudentDetails> {
           SizedBox(height: 30.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: _buildExamenes(),
+            child: _buildMarks(),
           ),
         ]));
   }
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      if (widget._student.name != _name) {
-        // If input has changed student's name
-        widget._student.name = _name;
+      Student.updateStudent(
+              widget._student.id, _name, _surname, _phone, _email, _address)
+          .then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Se han guardado los cambios")));
-      }
-
-      Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }).catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar modificar examen")));
+      });
     }
   }
 
-  Widget _buildExamenes() {
-    final tiles = widget._student.marks.map(
-      (Mark mark) {
-        return ListTile(
-            title: Text(
-              mark.exam.name,
-              style: _biggerFont,
-            ),
-            trailing: Text(mark.grade.toString()),
-            onLongPress: () {
-              _showRemoveMarkDialog(mark);
-            },
-            onTap: () {
-              // TODO: Mostrar diálogo para modificar nota de estudiante
-            });
-      },
-    );
+  Widget _buildMarks() {
+    return FutureBuilder(
+        future: widget._student.marks,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              final tiles = snapshot.data.map<Widget>(
+                (Mark mark) {
+                  return ListTile(
+                      title: Text(
+                        mark.exam.name,
+                        style: _biggerFont,
+                      ),
+                      trailing: Text(mark.grade.toString()),
+                      onLongPress: () {
+                        _showRemoveMarkDialog(mark);
+                      },
+                      onTap: () {
+                        // TODO: Mostrar diálogo para modificar nota de examen
+                      });
+                },
+              ).toList();
 
-    final divided = ListTile.divideTiles(
-      context: context,
-      tiles: tiles,
-    ).toList();
+              final divided = ListTile.divideTiles(
+                context: context,
+                tiles: tiles,
+              ).toList();
 
-    return Card(child: Column(children: divided));
+              return Card(child: Column(children: divided));
+            }
+          } else if (snapshot.hasError) return Text('${snapshot.error}');
+          return CircularProgressIndicator();
+        });
   }
 
   void _pushAddMark() {
     Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (BuildContext context) {
-      return DialogAddStudentMark(widget._student, widget._teaching);
+      return DialogAddStudentMark(widget._student);
     })).then((value) => setState(() {}));
   }
 
@@ -201,17 +254,18 @@ class _StudentDetailsState extends State<StudentDetails> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                setState(() {
-                  mark.exam.marks.remove(mark);
-                  mark.student.marks.remove(mark);
+                Mark.deleteMark(mark.id)
+                    .then((value) => Navigator.of(context).pop())
+                    .catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error al intentar borrar nota")));
                 });
-                Navigator.of(context).pop();
               },
             ),
           ],
         );
       },
-    );
+    ).then((value) => setState(() {}));
   }
 }
 
@@ -236,7 +290,15 @@ class Statistics extends StatelessWidget {
                     "MEDIA",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(_student.mean?.toStringAsFixed(_decimalPlaces) ?? "-"),
+                  FutureBuilder(
+                      future: _student.mean,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData)
+                          return Text(
+                              snapshot.data.toStringAsFixed(_decimalPlaces));
+                        return Text("-");
+                      },
+                      initialData: null),
                 ],
               ),
             ),
@@ -252,15 +314,28 @@ class Statistics extends StatelessWidget {
                     "MÁXIMO",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                      _student.maximum?.toStringAsFixed(_decimalPlaces) ?? "-"),
-                  SizedBox(height: 5.0),
+                  FutureBuilder(
+                      future: _student.maximum,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData)
+                          return Text(
+                              snapshot.data.toStringAsFixed(_decimalPlaces));
+                        return Text("-");
+                      },
+                      initialData: null),
                   Text(
                     "MÍNIMO",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                      _student.minimum?.toStringAsFixed(_decimalPlaces) ?? "-"),
+                  FutureBuilder(
+                      future: _student.minimum,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData)
+                          return Text(
+                              snapshot.data.toStringAsFixed(_decimalPlaces));
+                        return Text("-");
+                      },
+                      initialData: null),
                 ],
               ),
             ),

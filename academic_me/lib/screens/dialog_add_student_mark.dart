@@ -1,15 +1,16 @@
+import 'package:academic_me/models/exam.dart';
+import 'package:academic_me/models/exams.dart';
+import 'package:academic_me/models/mark.dart';
+import 'package:academic_me/models/marks.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:academic_me/models/student.dart';
-import 'package:academic_me/models/teaching.dart';
 
 class DialogAddStudentMark extends StatefulWidget {
   final Student _student;
-  final Teaching _teaching;
 
-  DialogAddStudentMark(this._student, this._teaching, {Key key})
-      : super(key: key);
+  DialogAddStudentMark(this._student, {Key key}) : super(key: key);
 
   @override
   _DialogAddStudentMarkState createState() => _DialogAddStudentMarkState();
@@ -18,7 +19,7 @@ class DialogAddStudentMark extends StatefulWidget {
 class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
     with AfterLayoutMixin<DialogAddStudentMark> {
   double _grade;
-  String _examen = "";
+  Exam _exam;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -38,26 +39,39 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        DropdownButtonFormField(
-                          items: _getExamsList(),
-                          decoration: InputDecoration(
-                            filled: true,
-                            prefixIcon: Icon(Icons.school),
-                            hintText: 'Nombre del examen',
-                            labelText: 'Nombre',
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _examen = value;
-                            });
-                          },
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return 'El nombre está vacío';
-                            }
-                            return null;
-                          },
-                        ),
+                        FutureBuilder<List<DropdownMenuItem<Exam>>>(
+                            future: _getExamsList(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.hasError) {
+                                  return Text(
+                                      "No se ha podido obtener la lista de exámenes");
+                                }
+                                return DropdownButtonFormField<Exam>(
+                                  items: snapshot.data,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    prefixIcon: Icon(Icons.school),
+                                    hintText: 'Nombre del examen',
+                                    labelText: 'Nombre',
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _exam = value;
+                                    });
+                                  },
+                                  validator: (exam) {
+                                    if (exam == null) {
+                                      return 'No se ha seleccionado examen';
+                                    }
+                                    return null;
+                                  },
+                                );
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            }),
                         SizedBox(height: 16.0),
                         TextFormField(
                           decoration: InputDecoration(
@@ -76,7 +90,7 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
                           inputFormatters: <TextInputFormatter>[
                             // only decimal or natural numbers
                             FilteringTextInputFormatter.allow(
-                                RegExp(r"^\d*((\.|,)\d*)?$")),
+                                RegExp(r"^\d*((\.|,)\d)?$")),
                           ],
                           validator: (text) {
                             if (text == null || text.isEmpty) {
@@ -95,34 +109,40 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
   }
 
   void showSnackbarIfNothingToAdd() {
-    if (_getExamsList().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content:
-              Text("El estudiante ya ha sido evaluado de todos los exámenes")));
-    }
+    _getExamsList().then((list) {
+      // TODO: Esto hay que cambiarlo para que no haga las dos peticiones!
+      if (list.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "El estudiante ya ha sido evaluado de todos los exámenes")));
+      }
+    });
   }
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      widget._teaching.addMark(
-          widget._teaching.exams.firstWhere((exam) => exam.name == _examen),
-          widget._student,
-          _grade);
-
-      Navigator.of(context).pop();
+      Mark.createMark(widget._student.id, _exam.id, _grade, "")
+          .then((value) => () => Navigator.of(context).pop())
+          .catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar añadir nota")));
+      });
     } else
       showSnackbarIfNothingToAdd();
   }
 
-  List<DropdownMenuItem<String>> _getExamsList() {
-    final notEvaluatedExams = widget._teaching.exams
-        // El estudiante no tiene nota para este examen
-        .where((exam) =>
-            !(exam.marks.any((mark) => mark.student == widget._student)));
+  Future<List<DropdownMenuItem<Exam>>> _getExamsList() async {
+    final allExams = await Exams.getExams();
+    final allMarks = await Marks.getMarks();
+
+    final notEvaluatedExams = allExams.exams
+        // El examen no tiene nota para este alumno
+        .where((exam) => !allMarks.marks.any((mark) =>
+            mark.studentId == widget._student.id && mark.examId == exam.id));
 
     return notEvaluatedExams
         .map((exam) =>
-            DropdownMenuItem<String>(child: Text(exam.name), value: exam.name))
+            DropdownMenuItem<Exam>(child: Text(exam.name), value: exam))
         .toList();
   }
 }

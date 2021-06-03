@@ -1,40 +1,150 @@
+import 'dart:convert';
 import 'dart:math';
 
-import 'mark.dart';
+import 'package:academic_me/models/credentials.dart';
+import 'package:academic_me/models/exams.dart';
+import 'package:academic_me/models/marks.dart';
+import 'package:academic_me/models/mark.dart';
+import 'package:http/http.dart' as http;
 
 class Student {
-  int _id;
-  String name;
-  String lastName;
-  String phone;
-  String email;
-  String address;
-  final _marks = <Mark>{};
+  final int id;
+  final String name;
+  final String surname;
+  final String phone;
+  final String email;
+  final String address;
+  Iterable<Mark> _marks;
 
-  Student(this._id, this.name, this.lastName);
+  static String _tablePath = "students/";
 
-  int get id => _id;
+  Student(
+      this.id, this.name, this.surname, this.phone, this.email, this.address);
 
-  Set<Mark> get marks => _marks;
+  Future<Iterable<Mark>> get marks async {
+    if (_marks == null) {
+      _marks = await _getMarksFromAPI();
+      final exams = await Exams.getExams();
+      _marks.forEach((m) {
+        m.exam = exams.exams.singleWhere((e) => e.id == m.examId);
+      });
+    }
 
-  double get mean {
-    if (_marks.isEmpty)
-      return null;
-    else
-      return _marks.map((m) => m.grade).reduce((a, b) => a + b) / _marks.length;
+    return _marks;
   }
 
-  double get maximum {
-    if (_marks.isEmpty)
-      return null;
-    else
-      return _marks.map((m) => m.grade).reduce(max);
+  Future<Iterable<Mark>> _getMarksFromAPI() {
+    return Marks.getMarksStudent(id);
   }
 
-  double get minimum {
-    if (_marks.isEmpty)
+  Future<double> get mean async {
+    final waitedMarks = await marks;
+    if (waitedMarks.isEmpty)
       return null;
     else
-      return _marks.map((m) => m.grade).reduce(min);
+      return waitedMarks.map((m) => m.grade).reduce((a, b) => a + b) /
+          waitedMarks.length;
+  }
+
+  Future<double> get minimum async {
+    final waitedMarks = await marks;
+    if (waitedMarks.isEmpty)
+      return null;
+    else
+      return waitedMarks.map((m) => m.grade).reduce(min);
+  }
+
+  Future<double> get maximum async {
+    final waitedMarks = await marks;
+    if (waitedMarks.isEmpty)
+      return null;
+    else
+      return waitedMarks.map((m) => m.grade).reduce(max);
+  }
+
+  Student.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        surname = json['surname'],
+        phone = json['phone'],
+        email = json['email'],
+        address = json['address'];
+
+  //////////// get //////////////////
+  static Future<Student> getStudent(int id) async {
+    final response = await http.get(Uri.https(Credentials.baseAddress,
+        Credentials.applicationName + _tablePath + id.toString()));
+
+    if (response.statusCode == 200)
+      return Student.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to get student');
+  }
+
+  ////////////// create ///////////////
+
+  static Future<Student> createStudent(String name, String surname,
+      String phone, String email, String address) async {
+    final response = await http.post(
+      Uri.https(
+          Credentials.baseAddress, Credentials.applicationName + _tablePath + 'new'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': Credentials.basicAuth
+      },
+      body: jsonEncode(<String, String>{
+        'name': name,
+        'surname': surname,
+        'phone': phone,
+        'email': email,
+        'address': address,
+      }),
+    );
+    if (response.statusCode == 201)
+      return Student.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to create student');
+  }
+
+//////////// delete //////////////////
+
+  static Future<Student> deleteStudent(int id) async {
+    final http.Response response = await http.delete(
+      Uri.https(Credentials.baseAddress,
+          Credentials.applicationName + _tablePath + id.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': Credentials.basicAuth
+      },
+    );
+    if (response.statusCode == 200)
+      return Student.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to delete student.');
+  }
+
+  /////////// update /////////
+
+  static Future<Student> updateStudent(int id, String name, String surname,
+      String phone, String email, String address) async {
+    final http.Response response = await http.put(
+      Uri.https(Credentials.baseAddress,
+          Credentials.applicationName + _tablePath + id.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': Credentials.basicAuth
+      },
+      body: jsonEncode(<String, String>{
+        'name': name,
+        'surname': surname,
+        'phone': phone,
+        'email': email,
+        'address': address,
+      }),
+    );
+    if (response.statusCode == 201)
+      return Student.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to update student');
   }
 }

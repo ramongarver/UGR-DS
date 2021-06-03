@@ -1,46 +1,145 @@
+import 'dart:convert';
 import 'dart:math';
 
-import 'student.dart';
-import 'mark.dart';
+import 'package:academic_me/models/credentials.dart';
+import 'package:academic_me/models/mark.dart';
+import 'package:academic_me/models/marks.dart';
+import 'package:academic_me/models/students.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class Exam {
-  int _id;
-  DateTime date;
-  String name;
-  final _marks = <Mark>{};
+  final int id;
+  final String name;
+  final DateTime date;
+  final int subjectId;
+  Iterable<Mark> _marks;
 
-  Exam(this.name, this.date);
+  static String _tablePath = "subjects/";
 
-  int get id => _id;
+  static final idProfesorSiempre = 1;
 
-  Set<Mark> get marks => _marks;
+  Exam(this.id, this.name, this.date, this.subjectId);
 
-  Mark getMarkByStudent(Student student) {
-    try {
-      return _marks.singleWhere((element) => element.student == student);
-    } catch (e) {
-      throw StateError("No hay ninguna nota: $e");
+  Future<Iterable<Mark>> get marks async {
+    if (_marks == null) {
+      _marks = await _getMarksFromAPI();
+      final students = await Students.getStudents();
+      _marks.forEach((m) {
+        m.student = students.students.singleWhere((e) => e.id == m.studentId);
+      });
     }
+
+    return _marks;
   }
 
-  double get mean {
-    if (_marks.isEmpty)
-      return null;
-    else
-      return _marks.map((m) => m.grade).reduce((a, b) => a + b) / _marks.length;
+  Future<Iterable<Mark>> _getMarksFromAPI() {
+    return Marks.getMarksExam(id);
   }
 
-  double get maximum {
-    if (_marks.isEmpty)
+  Future<double> get mean async {
+    final waitedMarks = await marks;
+    if (waitedMarks.isEmpty)
       return null;
     else
-      return _marks.map((m) => m.grade).reduce(max);
+      return waitedMarks.map((m) => m.grade).reduce((a, b) => a + b) /
+          waitedMarks.length;
   }
 
-  double get minimum {
-    if (_marks.isEmpty)
+  Future<double> get minimum async {
+    final waitedMarks = await marks;
+    if (waitedMarks.isEmpty)
       return null;
     else
-      return _marks.map((m) => m.grade).reduce(min);
+      return waitedMarks.map((m) => m.grade).reduce(min);
+  }
+
+  Future<double> get maximum async {
+    final waitedMarks = await marks;
+    if (waitedMarks.isEmpty)
+      return null;
+    else
+      return waitedMarks.map((m) => m.grade).reduce(max);
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'subject_id': subjectId};
+
+  Exam.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        date = DateTime.parse(json['date']),
+        subjectId = json['subject_id'];
+
+  //////////// get //////////////////
+  static Future<Exam> getExam(int id) async {
+    final response = await http.get(Uri.https(Credentials.baseAddress,
+        Credentials.applicationName + _tablePath + id.toString()));
+
+    if (response.statusCode == 200)
+      return Exam.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to get exam');
+  }
+
+  ////////////// create ///////////////
+
+  static Future<Exam> createExam(
+      String name, DateTime date, int subjectId) async {
+    final response = await http.post(
+      Uri.https(
+          Credentials.baseAddress, Credentials.applicationName + _tablePath + 'new'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': Credentials.basicAuth
+      },
+      body: jsonEncode(<String, dynamic>{
+        'name': name,
+        'subject_id': subjectId,
+        'date': DateFormat('yyyy-MM-dd').format(date)
+      }),
+    );
+    if (response.statusCode == 201)
+      return Exam.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to create exam');
+  }
+
+//////////// delete //////////////////
+
+  static Future<Exam> deleteExam(int id) async {
+    final http.Response response = await http.delete(
+      Uri.https(Credentials.baseAddress,
+          Credentials.applicationName + _tablePath + id.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': Credentials.basicAuth
+      },
+    );
+    if (response.statusCode == 200)
+      return Exam.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to delete exam.');
+  }
+
+  /////////// update /////////
+
+  static Future<Exam> updateExam(int id, String name, DateTime date) async {
+    final http.Response response = await http.put(
+      Uri.https(Credentials.baseAddress,
+          Credentials.applicationName + _tablePath + id.toString()),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': Credentials.basicAuth
+      },
+      body: jsonEncode(<String, dynamic>{
+        'name': name,
+        'date': DateFormat('yyyy-MM-dd').format(date)
+      }),
+    );
+    if (response.statusCode == 201)
+      return Exam.fromJson(jsonDecode(response.body));
+    else
+      throw Exception('Failed to update exam');
   }
 }

@@ -1,18 +1,15 @@
+import 'package:academic_me/models/subject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:academic_me/models/teaching.dart';
 
 class DialogAddSubject extends StatefulWidget {
-  final Teaching _teaching;
-
-  DialogAddSubject(this._teaching, {Key key}) : super(key: key);
+  DialogAddSubject({Key key}) : super(key: key);
 
   @override
   _DialogAddSubjectState createState() => _DialogAddSubjectState();
 }
 
 class _DialogAddSubjectState extends State<DialogAddSubject> {
-  int _id;
   String _name = "";
   final _formKey = GlobalKey<FormState>();
 
@@ -33,33 +30,6 @@ class _DialogAddSubjectState extends State<DialogAddSubject> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            prefixIcon: Icon(Icons.tag),
-                            hintText: 'ID de la asignatura',
-                            labelText: 'ID',
-                          ),
-                          onChanged: (value) {
-                            setState(() => _id = int.parse(value));
-                          },
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return 'El ID está vacío';
-                            }
-                            if (widget._teaching.subjects.any(
-                                (subject) => (subject.id.toString() == text))) {
-                              return 'El ID ya existe';
-                            }
-
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.0),
                         TextFormField(
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
@@ -84,8 +54,12 @@ class _DialogAddSubjectState extends State<DialogAddSubject> {
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      widget._teaching.addSubject(_id, _name);
-      Navigator.of(context).pop();
+      Subject.createSubject(_name, Subject.idProfesorSiempre)
+          .then((value) => Navigator.of(context).pop())
+          .catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar añadir asignatura")));
+      });
     }
   }
 }

@@ -1,14 +1,15 @@
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:academic_me/models/exam.dart';
 import 'package:academic_me/models/subject.dart';
-import 'package:academic_me/models/teaching.dart';
+import 'package:intl/intl.dart';
 
 class DialogAddExam extends StatefulWidget {
-  final Teaching _teaching;
   final Subject _subject;
 
-  DialogAddExam(this._teaching, this._subject, {Key key}) : super(key: key);
+  DialogAddExam(this._subject, {Key key}) : super(key: key);
 
   @override
   _DialogAddExamState createState() => _DialogAddExamState();
@@ -16,6 +17,7 @@ class DialogAddExam extends StatefulWidget {
 
 class _DialogAddExamState extends State<DialogAddExam> {
   String _name = "";
+  DateTime _date = DateTime.now();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -52,23 +54,43 @@ class _DialogAddExamState extends State<DialogAddExam> {
                             if (text == null || text.isEmpty) {
                               return 'El nombre está vacío';
                             }
-                            if (widget._subject.exams
-                                .any((exam) => exam.name == text)) {
-                              return 'El nombre ya existe';
-                            }
                             return null;
                           },
                         ),
-                        // TODO: Elegir fecha y hora del examen para guardarlos.
+                        SizedBox(height: 16.0),
+                        Row(
+                          children: [
+                            Text(DateFormat('yyyy-MM-dd').format(_date)),
+                            IconButton(
+                              icon: Icon(Icons.calendar_today),
+                              onPressed: () {
+                                DatePicker.showDatePicker(context,
+                                    showTitleActions: true,
+                                    minTime: DateTime(2018, 3, 5),
+                                    maxTime: DateTime(2022, 6, 7),
+                                    onChanged: (date) {
+                                  setState(() => _date = date);
+                                }, onConfirm: (date) {
+                                  setState(() => _date = date);
+                                },
+                                    currentTime: DateTime.now(),
+                                    locale: LocaleType.es);
+                              },
+                            )
+                          ],
+                        )
                       ],
                     )))));
   }
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      widget._teaching.addExam(Exam(_name, DateTime.now()),
-          widget._subject); // TODO: ahora mismo se guarda con fecha actual
-      Navigator.of(context).pop();
+      Exam.createExam(_name, _date, widget._subject.id)
+          .then((value) => () => Navigator.of(context).pop())
+          .catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar añadir nota")));
+      });
     }
   }
 }

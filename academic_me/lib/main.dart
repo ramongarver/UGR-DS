@@ -1,29 +1,28 @@
+import 'dart:io';
+import 'package:academic_me/development/my_http_overrides.dart';
 import 'package:flutter/material.dart';
 import 'package:academic_me/screens/students_list_view.dart';
 import 'package:academic_me/screens/subjects_list_view.dart';
-import 'package:provider/provider.dart';
-
-import 'models/teaching.dart';
 
 void main() {
+  HttpOverrides.global = new MyHttpOverrides();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Teaching(),
-      child: MaterialApp(
-        title: 'Gestor de asignatura',
-        theme: ThemeData(
-          primaryColor: Colors.orange,
-          accentColor: Colors.orangeAccent,
-          //platform: TargetPlatform.iOS
-        ),
-        home: MainPage(),
-        locale: Locale('es'),
+    return MaterialApp(
+      title: 'Gestor de asignatura',
+      theme: ThemeData(
+        primaryColor: Colors.orange,
+        accentColor: Colors.orangeAccent,
+        floatingActionButtonTheme:
+            FloatingActionButtonThemeData(backgroundColor: Colors.orangeAccent),
+        //platform: TargetPlatform.iOS
       ),
+      home: MainPage(),
+      locale: Locale('es'),
     );
   }
 }
@@ -37,12 +36,8 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _children = <Widget>[
-    Consumer<Teaching>(
-      builder: (context, teaching, child) => StudentsListView(teaching),
-    ),
-    Consumer<Teaching>(
-      builder: (context, teaching, child) => SubjectsListView(teaching),
-    ),
+    StudentsListView(),
+    SubjectsListView()
   ];
 
   void _onItemTapped(int index) {

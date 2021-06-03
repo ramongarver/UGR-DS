@@ -1,15 +1,16 @@
+import 'package:academic_me/models/mark.dart';
+import 'package:academic_me/models/marks.dart';
+import 'package:academic_me/models/student.dart';
+import 'package:academic_me/models/students.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:academic_me/models/exam.dart';
-import 'package:academic_me/models/teaching.dart';
 
 class DialogAddExamMark extends StatefulWidget {
   final Exam _exam;
-  final Teaching _teaching;
 
-  DialogAddExamMark(this._exam, this._teaching, {Key key})
-      : super(key: key);
+  DialogAddExamMark(this._exam, {Key key}) : super(key: key);
 
   @override
   _DialogAddExamMarkState createState() => _DialogAddExamMarkState();
@@ -18,7 +19,7 @@ class DialogAddExamMark extends StatefulWidget {
 class _DialogAddExamMarkState extends State<DialogAddExamMark>
     with AfterLayoutMixin<DialogAddExamMark> {
   double _grade;
-  String _student = "";
+  Student _student;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -38,26 +39,39 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        DropdownButtonFormField(
-                          items: _getStudentsList(),
-                          decoration: InputDecoration(
-                            filled: true,
-                            prefixIcon: Icon(Icons.person),
-                            hintText: 'Nombre del estudiante',
-                            labelText: 'Nombre',
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _student = value;
-                            });
-                          },
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return 'El nombre está vacío';
-                            }
-                            return null;
-                          },
-                        ),
+                        FutureBuilder<List<DropdownMenuItem<Student>>>(
+                            future: _getStudentsList(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.hasError) {
+                                  return Text(
+                                      "No se ha podido obtener la lista de exámenes");
+                                }
+                                return DropdownButtonFormField<Student>(
+                                  items: snapshot.data,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    prefixIcon: Icon(Icons.person),
+                                    hintText: 'Nombre del estudiante',
+                                    labelText: 'Nombre',
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _student = value;
+                                    });
+                                  },
+                                  validator: (student) {
+                                    if (student == null) {
+                                      return 'No se ha seleccionado estudiante';
+                                    }
+                                    return null;
+                                  },
+                                );
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            }),
                         SizedBox(height: 16.0),
                         TextFormField(
                           decoration: InputDecoration(
@@ -76,7 +90,7 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
                           inputFormatters: <TextInputFormatter>[
                             // only decimal or natural numbers
                             FilteringTextInputFormatter.allow(
-                                RegExp(r"^\d*((\.|,)\d*)?$")),
+                                RegExp(r"^\d*((\.|,)\d)?$")),
                           ],
                           validator: (text) {
                             if (text == null || text.isEmpty) {
@@ -95,34 +109,40 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
   }
 
   void showSnackbarIfNothingToAdd() {
-    if (_getStudentsList().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content:
-              Text("Ya se ha evaluado a todos los estudiantes en este examen.")));
-    }
+    _getStudentsList().then((list) {
+      // TODO: Esto hay que cambiarlo para que no haga las dos peticiones!
+      if (list.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Todos los estudiantes ya tienen nota para este examen.")));
+      }
+    });
   }
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      widget._teaching.addMark(
-          widget._exam,
-          widget._teaching.students.firstWhere((student) => student.name == _student),
-          _grade);
-
-      Navigator.of(context).pop();
+      Mark.createMark(_student.id, widget._exam.id, _grade, "")
+          .then((value) => Navigator.of(context).pop())
+          .catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar añadir nota")));
+      });
     } else
       showSnackbarIfNothingToAdd();
   }
 
-  List<DropdownMenuItem<String>> _getStudentsList() {
-    final notEvaluatedStudents = widget._teaching.students
+  Future<List<DropdownMenuItem<Student>>> _getStudentsList() async {
+    final allStudents = await Students.getStudents();
+    final allMarks = await Marks.getMarks();
+
+    final notEvaluatedStudents = allStudents.students
         // El estudiante no tiene nota para este examen
-        .where((student) =>
-            !(student.marks.any((mark) => mark.exam == widget._exam)));
+        .where((student) => !(allMarks.marks.any((mark) =>
+            mark.examId == widget._exam.id && student.id == mark.studentId)));
 
     return notEvaluatedStudents
-        .map((student) =>
-            DropdownMenuItem<String>(child: Text(student.name), value: student.name))
+        .map((student) => DropdownMenuItem<Student>(
+            child: Text(student.name), value: student))
         .toList();
   }
 }

@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:academic_me/models/student.dart';
-import 'package:academic_me/models/teaching.dart';
 
 class DialogAddStudent extends StatefulWidget {
-  final Teaching _teaching;
-
-  DialogAddStudent(this._teaching, {Key key}) : super(key: key);
-
   @override
   _DialogAddStudentState createState() => _DialogAddStudentState();
 }
 
 class _DialogAddStudentState extends State<DialogAddStudent> {
-  int _id;
   String _name = "";
-  String _lastName = "";
+  String _surname = "";
+  String _phone = "";
+  String _email = "";
+  String _address = "";
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -35,33 +33,6 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            prefixIcon: Icon(Icons.tag),
-                            hintText: 'ID del alumno',
-                            labelText: 'ID',
-                          ),
-                          onChanged: (value) {
-                            setState(() => _id = int.parse(value));
-                          },
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return 'El ID está vacío';
-                            }
-                            if (widget._teaching.students.any(
-                                (student) => (student.id.toString() == text))) {
-                              return 'El ID ya existe';
-                            }
-
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.0),
                         TextFormField(
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
@@ -89,7 +60,7 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
                             labelText: 'Apellido(s)',
                           ),
                           onChanged: (value) {
-                            setState(() => _lastName = value);
+                            setState(() => _surname = value);
                           },
                           validator: (text) {
                             if (text == null || text.isEmpty) {
@@ -97,16 +68,76 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
                             }
                             return null;
                           },
-                        )
+                        ),
+                        SizedBox(height: 16.0),
+                        TextFormField(
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            filled: true,
+                            prefixIcon: Icon(Icons.phone_iphone),
+                            hintText: 'Teléfono del alumno',
+                            labelText: 'Teléfono',
+                          ),
+                          onChanged: (value) {
+                            setState(() => _phone = value);
+                          },
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return 'El teléfono está vacío';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+                        TextFormField(
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            filled: true,
+                            prefixIcon: Icon(Icons.email),
+                            hintText: 'Email del alumno',
+                            labelText: 'Email',
+                          ),
+                          onChanged: (value) {
+                            setState(() => _email = value);
+                          },
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return 'El email está vacío';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+                        TextFormField(
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            filled: true,
+                            prefixIcon: Icon(Icons.home),
+                            hintText: 'Dirección del alumno',
+                            labelText: 'Dirección',
+                          ),
+                          onChanged: (value) {
+                            setState(() => _address = value);
+                          },
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return 'La dirección está vacía';
+                            }
+                            return null;
+                          },
+                        ),
                       ],
-                      // TODO: Más atributos para estudiante (?)
                     )))));
   }
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      widget._teaching.addStudent(Student(_id, _name, _lastName));
-      Navigator.of(context).pop();
+      Student.createStudent(_name, _surname, _phone, _email, _address)
+          .then((value) => Navigator.of(context).pop())
+          .catchError((e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar añadir estudiante")));
+      });
     }
   }
 }

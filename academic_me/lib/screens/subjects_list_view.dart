@@ -1,14 +1,13 @@
+import 'package:academic_me/models/exam.dart';
 import 'package:flutter/material.dart';
 
-import 'package:academic_me/models/teaching.dart';
 import 'package:academic_me/models/subject.dart';
+import 'package:academic_me/models/subjects.dart';
 import 'package:academic_me/screens/exams_list_view.dart';
 import 'package:academic_me/screens/dialog_add_subject.dart';
 
 class SubjectsListView extends StatefulWidget {
-  final Teaching _teaching;
-
-  SubjectsListView(this._teaching, {Key key}) : super(key: key);
+  SubjectsListView({Key key}) : super(key: key);
 
   @override
   _SubjectsListViewState createState() => _SubjectsListViewState();
@@ -18,37 +17,43 @@ class _SubjectsListViewState extends State<SubjectsListView> {
   final _biggerFont = TextStyle(fontSize: 18.0);
 
   Widget _buildSubjects() {
-    final tiles = widget._teaching.subjects.map(
-      (Subject subject) {
-        return ListTile(
-            title: Text(
-              subject.name,
-              style: _biggerFont,
-            ),
-            onLongPress: () {
-              _showRemoveDialog(subject);
-            },
-            onTap: () {
-              setState(() {
-                Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (BuildContext context) {
-                  return ExamsListView(widget._teaching, subject);
-                })).then((value) => setState(() {}));
-              });
-            });
-      },
-    );
+    return FutureBuilder<Subjects>(
+        future: Subjects.getSubjects(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              final tiles = snapshot.data.subjects.map(
+                (Subject subject) {
+                  return ListTile(
+                      title: Text(
+                        subject.name,
+                        style: _biggerFont,
+                      ),
+                      onLongPress: () {
+                        _showRemoveDialog(subject);
+                      },
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute<Future<Exam>>(
+                            builder: (BuildContext context) {
+                          return ExamsListView(subject);
+                        })).then((f) => f.then((exam) => setState(() {})));
+                      });
+                },
+              );
+              final divided = ListTile.divideTiles(
+                context: context,
+                tiles: tiles,
+              ).toList();
 
-    final divided = ListTile.divideTiles(
-      context: context,
-      tiles: tiles,
-    ).toList();
-
-    return ListView(children: divided);
+              return ListView(children: divided);
+            }
+          } else if (snapshot.hasError) return Text('${snapshot.error}');
+          return CircularProgressIndicator();
+        });
   }
 
   Future<void> _showRemoveDialog(Subject subject) async {
-    return showDialog<void>(
+    return showDialog<Future<Subject>>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -65,21 +70,21 @@ class _SubjectsListViewState extends State<SubjectsListView> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                widget._teaching.removeSubject(subject);
-                Navigator.of(context).pop();
+                Future<Subject> future = Subject.deleteSubject(subject.id);
+                Navigator.of(context).pop(future);
               },
             ),
           ],
         );
       },
-    );
+    ).then((f) => f.then((subject) => setState(() {})));
   }
 
   void _pushAddSubject() {
-    Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
-      return DialogAddSubject(widget._teaching);
-    }));
+    Navigator.of(context).push(
+        MaterialPageRoute<Future<Subject>>(builder: (BuildContext context) {
+      return DialogAddSubject();
+    })).then((f) => f.then((subject) => setState(() {})));
   }
 
   @override
@@ -87,9 +92,7 @@ class _SubjectsListViewState extends State<SubjectsListView> {
     return Scaffold(
       body: _buildSubjects(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _pushAddSubject();
-        },
+        onPressed: () => _pushAddSubject(),
         child: const Icon(Icons.add),
       ),
     );
