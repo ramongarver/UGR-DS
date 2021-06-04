@@ -221,7 +221,7 @@ class _ExamDetailsState extends State<ExamDetails> {
         );
       },
     ).then((deleted) {
-      if (deleted)
+      if (deleted ?? false)
         setState(() {
           widget._exam.updateMarks();
         });
