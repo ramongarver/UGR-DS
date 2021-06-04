@@ -47,7 +47,7 @@ class _SubjectsListViewState extends State<SubjectsListView> {
               return ListView(children: divided);
             }
           } else if (snapshot.hasError) return Text('${snapshot.error}');
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 
@@ -83,7 +83,7 @@ class _SubjectsListViewState extends State<SubjectsListView> {
         );
       },
     ).then((deleted) {
-      if (deleted) setState(() {});
+      if (deleted ?? false) setState(() {});
     });
   }
 
@@ -92,7 +92,7 @@ class _SubjectsListViewState extends State<SubjectsListView> {
         .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddSubject();
     })).then((added) {
-      if (added) setState(() {});
+      if (added ?? false) setState(() {});
     });
   }
 
@@ -103,6 +103,7 @@ class _SubjectsListViewState extends State<SubjectsListView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _pushAddSubject(),
         child: const Icon(Icons.add),
+        tooltip: "Añadir asignatura",
       ),
     );
   }

@@ -35,7 +35,7 @@ class _StudentsListViewState extends State<StudentsListView> {
                             builder: (BuildContext context) {
                           return StudentDetails(student);
                         })).then((edited) {
-                          if (edited) setState(() {});
+                          if (edited ?? false) setState(() {});
                         });
                       });
                 },
@@ -48,7 +48,7 @@ class _StudentsListViewState extends State<StudentsListView> {
               return ListView(children: divided);
             }
           } else if (snapshot.hasError) return Text('${snapshot.error}');
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 
@@ -84,7 +84,7 @@ class _StudentsListViewState extends State<StudentsListView> {
         );
       },
     ).then((deleted) {
-      if (deleted) setState(() {});
+      if (deleted ?? false) setState(() {});
     });
   }
 
@@ -93,7 +93,7 @@ class _StudentsListViewState extends State<StudentsListView> {
         .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddStudent();
     })).then((added) {
-      if (added) setState(() {});
+      if (added ?? false) setState(() {});
     });
   }
 
@@ -104,6 +104,7 @@ class _StudentsListViewState extends State<StudentsListView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _pushAddStudent(),
         child: const Icon(Icons.add),
+        tooltip: "Añadir estudiante",
       ),
     );
   }

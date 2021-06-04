@@ -22,9 +22,12 @@ class _DialogAddSubjectState extends State<DialogAddSubject> {
           title: Text('Añadir asignatura'),
           actions: [
             if (_saving)
-              CircularProgressIndicator()
+              Center(child: CircularProgressIndicator())
             else
-              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+              IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: _saveAndExit,
+                  tooltip: "Guardar y salir")
           ],
         ),
         body: Center(

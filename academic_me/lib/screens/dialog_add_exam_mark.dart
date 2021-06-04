@@ -18,7 +18,7 @@ class DialogAddExamMark extends StatefulWidget {
 
 class _DialogAddExamMarkState extends State<DialogAddExamMark>
     with AfterLayoutMixin<DialogAddExamMark> {
-  double _grade;
+  String _grade;
   Student _student;
   Future<List<DropdownMenuItem<Student>>> _studentsList;
   final _formKey = GlobalKey<FormState>();
@@ -38,9 +38,12 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
           title: Text('Añadir nota'),
           actions: [
             if (_saving)
-              CircularProgressIndicator()
+              Center(child: CircularProgressIndicator())
             else
-              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+              IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: _saveAndExit,
+                  tooltip: "Guardar y salir")
           ],
         ),
         body: Center(
@@ -81,7 +84,8 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
                                   },
                                 );
                               } else {
-                                return CircularProgressIndicator();
+                                return Center(
+                                    child: CircularProgressIndicator());
                               }
                             }),
                         SizedBox(height: 16.0),
@@ -93,21 +97,22 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
                             labelText: 'Nota',
                           ),
                           onChanged: (value) {
-                            setState(() {
-                              _grade =
-                                  double.parse(value.replaceFirst(",", "."));
-                            });
+                            setState(() => _grade = value);
                           },
                           keyboardType:
                               TextInputType.numberWithOptions(decimal: true),
                           inputFormatters: <TextInputFormatter>[
                             // only decimal or natural numbers
                             FilteringTextInputFormatter.allow(
-                                RegExp(r"^\d*((\.|,)\d)?$")),
+                                RegExp(r"^((\d((\.|,)\d?)?)|(10(.0?)?))$")),
                           ],
                           validator: (text) {
-                            if (text == null || text.isEmpty) {
+                            if (text == null || text.isEmpty)
                               return 'No se ha indicado la nota';
+                            RegExp regex =
+                                new RegExp(r"^((\d((\.|,)\d)?)|(10(.0)?))$");
+                            if (!regex.hasMatch(text)) {
+                              return 'El formato introducido no es válido';
                             }
                             return null;
                           },
@@ -134,7 +139,8 @@ class _DialogAddExamMarkState extends State<DialogAddExamMark>
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
       setState(() => _saving = true);
-      Mark.createMark(_student.id, widget._exam.id, _grade, "").then((value) {
+      final grade = double.parse(_grade.replaceFirst(",", "."));
+      Mark.createMark(_student.id, widget._exam.id, grade, "").then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Nota añadida correctamente")));
         Navigator.of(context).pop(true);

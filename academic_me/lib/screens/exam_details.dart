@@ -41,14 +41,18 @@ class _ExamDetailsState extends State<ExamDetails> {
           title: Text(widget._exam.name),
           actions: [
             if (_saving)
-              CircularProgressIndicator()
+              Center(child: CircularProgressIndicator())
             else
-              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+              IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: _saveAndExit,
+                  tooltip: "Guardar y salir")
           ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _pushAddMark,
           child: const Icon(Icons.add),
+          tooltip: "Añadir nota",
         ),
         body: ListView(children: [
           SizedBox(height: 10.0),
@@ -168,7 +172,7 @@ class _ExamDetailsState extends State<ExamDetails> {
               return Card(child: Column(children: divided));
             }
           } else if (snapshot.hasError) return Text('${snapshot.error}');
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 
@@ -177,7 +181,7 @@ class _ExamDetailsState extends State<ExamDetails> {
         .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddExamMark(widget._exam);
     })).then((added) {
-      if (added)
+      if (added ?? false)
         setState(() {
           widget._exam.updateMarks();
         });

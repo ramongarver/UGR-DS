@@ -46,9 +46,12 @@ class _StudentDetailsState extends State<StudentDetails> {
           title: Text(widget._student.completeName),
           actions: [
             if (_saving)
-              CircularProgressIndicator()
+              Center(child: CircularProgressIndicator())
             else
-              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+              IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: _saveAndExit,
+                  tooltip: "Guardar y salir")
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -56,113 +59,11 @@ class _StudentDetailsState extends State<StudentDetails> {
             _pushAddMark();
           },
           child: const Icon(Icons.add),
+          tooltip: "Añadir nota",
         ),
         body: ListView(children: [
-          SizedBox(height: 10.0),
-          Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    initialValue: _name,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.person),
-                      hintText: 'Nombre del alumno',
-                      labelText: 'Nombre',
-                    ),
-                    onChanged: (value) {
-                      setState(() => _name = value);
-                    },
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'El nombre está vacío';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    initialValue: _surname,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.person),
-                      labelText: 'Apellido(s)',
-                    ),
-                    onChanged: (value) {
-                      setState(() => _surname = value);
-                    },
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'El apellido está vacío';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    initialValue: _phone,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.phone_iphone),
-                      hintText: 'Teléfono del alumno',
-                      labelText: 'Teléfono',
-                    ),
-                    keyboardType: TextInputType.phone,
-                    onChanged: (value) {
-                      setState(() => _phone = value);
-                    },
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'El teléfono está vacío';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    initialValue: _email,
-                    textCapitalization: TextCapitalization.none,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.email),
-                      hintText: 'Email del alumno',
-                      labelText: 'Email',
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) {
-                      setState(() => _email = value);
-                    },
-                    validator: (value) => EmailValidator.validate(value)
-                        ? null
-                        : "Email no válido",
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    initialValue: _address,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.home),
-                      hintText: 'Dirección del alumno',
-                      labelText: 'Dirección',
-                    ),
-                    keyboardType: TextInputType.streetAddress,
-                    onChanged: (value) {
-                      setState(() => _address = value);
-                    },
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'La dirección está vacía';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              )),
+          SizedBox(height: 12.0),
+          buildStudentForm(),
           SizedBox(height: 30.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -182,6 +83,115 @@ class _StudentDetailsState extends State<StudentDetails> {
             child: _buildMarks(),
           ),
         ]));
+  }
+
+  Form buildStudentForm() {
+    return Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TextFormField(
+                initialValue: _name,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefixIcon: Icon(Icons.person),
+                  hintText: 'Nombre del alumno',
+                  labelText: 'Nombre',
+                ),
+                onChanged: (value) {
+                  setState(() => _name = value);
+                },
+                validator: (text) {
+                  if (text == null || text.isEmpty) {
+                    return 'El nombre está vacío';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                initialValue: _surname,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefixIcon: Icon(Icons.person),
+                  labelText: 'Apellido(s)',
+                ),
+                onChanged: (value) {
+                  setState(() => _surname = value);
+                },
+                validator: (text) {
+                  if (text == null || text.isEmpty) {
+                    return 'El apellido está vacío';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                initialValue: _phone,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefixIcon: Icon(Icons.phone_iphone),
+                  hintText: 'Teléfono del alumno',
+                  labelText: 'Teléfono',
+                ),
+                keyboardType: TextInputType.phone,
+                onChanged: (value) {
+                  setState(() => _phone = value);
+                },
+                validator: (text) {
+                  if (text == null || text.isEmpty) {
+                    return 'El teléfono está vacío';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                initialValue: _email,
+                textCapitalization: TextCapitalization.none,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefixIcon: Icon(Icons.email),
+                  hintText: 'Email del alumno',
+                  labelText: 'Email',
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  setState(() => _email = value);
+                },
+                validator: (value) =>
+                    EmailValidator.validate(value) ? null : "Email no válido",
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                initialValue: _address,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefixIcon: Icon(Icons.home),
+                  hintText: 'Dirección del alumno',
+                  labelText: 'Dirección',
+                ),
+                keyboardType: TextInputType.streetAddress,
+                onChanged: (value) {
+                  setState(() => _address = value);
+                },
+                validator: (text) {
+                  if (text == null || text.isEmpty) {
+                    return 'La dirección está vacía';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ));
   }
 
   void _saveAndExit() {
@@ -232,7 +242,7 @@ class _StudentDetailsState extends State<StudentDetails> {
               return Card(child: Column(children: divided));
             }
           } else if (snapshot.hasError) return Text('${snapshot.error}');
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 
@@ -241,7 +251,7 @@ class _StudentDetailsState extends State<StudentDetails> {
         .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
       return DialogAddStudentMark(widget._student);
     })).then((added) {
-      if (added)
+      if (added ?? false)
         setState(() {
           widget._student.updateMarks();
         });
@@ -281,7 +291,7 @@ class _StudentDetailsState extends State<StudentDetails> {
         );
       },
     ).then((deleted) {
-      if (deleted)
+      if (deleted ?? false)
         setState(() {
           widget._student.updateMarks();
         });

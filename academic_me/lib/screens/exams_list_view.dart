@@ -41,7 +41,7 @@ class _ExamsListViewState extends State<ExamsListView> {
                             builder: (BuildContext context) {
                           return ExamDetails(exam);
                         })).then((changed) {
-                          if (changed) setState(() {});
+                          if (changed ?? false) setState(() {});
                         });
                       });
                 },
@@ -54,7 +54,7 @@ class _ExamsListViewState extends State<ExamsListView> {
               return ListView(children: divided);
             }
           } else if (snapshot.hasError) return Text('${snapshot.error}');
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 
@@ -90,7 +90,7 @@ class _ExamsListViewState extends State<ExamsListView> {
         );
       },
     ).then((deleted) {
-      if (deleted) setState(() {});
+      if (deleted ?? false) setState(() {});
     });
   }
 
@@ -116,6 +116,7 @@ class _ExamsListViewState extends State<ExamsListView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _pushAddExam(),
         child: const Icon(Icons.add),
+        tooltip: "Añadir examen",
       ),
     );
   }

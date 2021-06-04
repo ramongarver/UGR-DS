@@ -34,9 +34,12 @@ class _DialogAddExamState extends State<DialogAddExam> {
           title: Text('Añadir examen'),
           actions: [
             if (_saving)
-              CircularProgressIndicator()
+              Center(child: CircularProgressIndicator())
             else
-              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+              IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: _saveAndExit,
+                  tooltip: "Guardar y salir")
           ],
         ),
         body: Center(
