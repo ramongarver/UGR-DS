@@ -27,6 +27,8 @@ class _StudentDetailsState extends State<StudentDetails> {
   final _formKey = GlobalKey<FormState>();
   final decimalPlaces = 2; // decimal places for displaying marks
 
+  bool _saving = false;
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +45,10 @@ class _StudentDetailsState extends State<StudentDetails> {
         appBar: AppBar(
           title: Text(widget._student.completeName),
           actions: [
-            IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+            if (_saving)
+              CircularProgressIndicator()
+            else
+              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -181,6 +186,7 @@ class _StudentDetailsState extends State<StudentDetails> {
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
+      setState(() => _saving = true);
       Student.updateStudent(
               widget._student.id, _name, _surname, _phone, _email, _address)
           .then((value) {
@@ -188,6 +194,7 @@ class _StudentDetailsState extends State<StudentDetails> {
             SnackBar(content: Text("Estudiante modificado correctamente")));
         Navigator.of(context).pop(true);
       }).catchError((e) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar modificar estudiante")));
       });

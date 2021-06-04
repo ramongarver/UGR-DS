@@ -17,13 +17,18 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool _saving = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text('Añadir alumno'),
           actions: [
-            IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+            if (_saving)
+              CircularProgressIndicator()
+            else
+              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
           ],
         ),
         body: Center(
@@ -135,12 +140,14 @@ class _DialogAddStudentState extends State<DialogAddStudent> {
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
+      setState(() => _saving = true);
       Student.createStudent(_name, _surname, _phone, _email, _address)
           .then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Estudiante añadido correctamente")));
         Navigator.of(context).pop(true);
       }).catchError((e) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir estudiante")));
       });

@@ -23,6 +23,8 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
   Future<List<DropdownMenuItem<Exam>>> _examsList;
   final _formKey = GlobalKey<FormState>();
 
+  bool _saving = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,10 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
         appBar: AppBar(
           title: Text('Añadir nota'),
           actions: [
-            IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+            if (_saving)
+              CircularProgressIndicator()
+            else
+              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
           ],
         ),
         body: Center(
@@ -128,11 +133,13 @@ class _DialogAddStudentMarkState extends State<DialogAddStudentMark>
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
+      setState(() => _saving = true);
       Mark.createMark(widget._student.id, _exam.id, _grade, "").then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Nota añadida correctamente")));
         Navigator.of(context).pop(true);
       }).catchError((e) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir nota")));
       });

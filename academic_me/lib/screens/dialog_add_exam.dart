@@ -20,13 +20,23 @@ class _DialogAddExamState extends State<DialogAddExam> {
   DateTime _date = DateTime.now();
   final _formKey = GlobalKey<FormState>();
 
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text('Añadir examen'),
           actions: [
-            IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+            if (_saving)
+              CircularProgressIndicator()
+            else
+              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
           ],
         ),
         body: Center(
@@ -85,12 +95,13 @@ class _DialogAddExamState extends State<DialogAddExam> {
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
-      Exam.createExam(_name, _date, widget._subject.id)
-          .then((value) {
+      setState(() => _saving = true);
+      Exam.createExam(_name, _date, widget._subject.id).then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Examen añadido correctamente")));
         Navigator.of(context).pop(true);
       }).catchError((e) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar añadir examen")));
       });

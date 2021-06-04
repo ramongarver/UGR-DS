@@ -25,6 +25,8 @@ class _ExamDetailsState extends State<ExamDetails> {
   final _formKey = GlobalKey<FormState>();
   final decimalPlaces = 2; // decimal places for displaying marks
 
+  bool _saving = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,10 @@ class _ExamDetailsState extends State<ExamDetails> {
         appBar: AppBar(
           title: Text(widget._exam.name),
           actions: [
-            IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+            if (_saving)
+              CircularProgressIndicator()
+            else
+              IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -119,11 +124,13 @@ class _ExamDetailsState extends State<ExamDetails> {
 
   void _saveAndExit() {
     if (_formKey.currentState.validate()) {
+      setState(() => _saving = true);
       Exam.updateExam(widget._exam.id, _name, _date).then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Examen modificado correctamente")));
         Navigator.of(context).pop(true);
       }).catchError((e) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error al intentar modificar examen")));
       });
