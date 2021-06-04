@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ds5.academic_me">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="academic_me"
         android:icon="@mipmap/ic_launcher">
