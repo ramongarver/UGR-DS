@@ -13,16 +13,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gestor de asignatura',
+      title: 'AcademicMe',
       theme: ThemeData(
         primaryColor: Colors.orange,
         accentColor: Colors.orangeAccent,
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: Colors.orangeAccent),
-        //platform: TargetPlatform.iOS
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        appBarTheme: AppBarTheme(
+          color: Colors.grey[850],
+          brightness: Brightness.dark,
+        ),
+        primaryTextTheme: TextTheme(
+          headline6: TextStyle(color: Colors.pink),
+        ),
+        scaffoldBackgroundColor: Colors.grey[900],
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.grey[850],
+          shape: RoundedRectangleBorder(),
+          textTheme: ButtonTextTheme.primary,
+        ),
+        colorScheme: ColorScheme.dark().copyWith(
+          primary: Color(0xffe84545),
+          secondary: Color(0xffe84545),
+          secondaryVariant: Color(0xff903749),
+        ),
       ),
       home: MainPage(),
-      locale: Locale('es'),
+      locale: Locale('es', 'ES'),
     );
   }
 }
@@ -50,7 +69,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestor de asignatura'),
+        title: const Text('AcademicMe'),
       ),
       body: Center(
         child: _children.elementAt(_selectedIndex),
