@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:academic_me/development/my_http_overrides.dart';
-import 'package:academic_me/models/mark.dart';
-import 'package:academic_me/models/marks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:academic_me/models/student.dart';
-import 'package:academic_me/models/exam.dart';
 
 void main() {
   HttpOverrides.global = new MyHttpOverrides();
