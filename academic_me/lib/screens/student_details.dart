@@ -7,6 +7,15 @@ import 'package:academic_me/models/student.dart';
 import 'package:academic_me/screens/dialog_add_student_mark.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+_launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
 class StudentDetails extends StatefulWidget {
   final Student _student;
@@ -82,6 +91,7 @@ class _StudentDetailsState extends State<StudentDetails> {
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: _buildMarks(),
           ),
+          SizedBox(height: 80.0),
         ]));
   }
 
@@ -132,62 +142,106 @@ class _StudentDetailsState extends State<StudentDetails> {
                 },
               ),
               SizedBox(height: 16.0),
-              TextFormField(
-                initialValue: _phone,
-                decoration: InputDecoration(
-                  filled: true,
-                  prefixIcon: Icon(Icons.phone_iphone),
-                  hintText: 'Teléfono del alumno',
-                  labelText: 'Teléfono',
-                ),
-                keyboardType: TextInputType.phone,
-                onChanged: (value) {
-                  setState(() => _phone = value);
-                },
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return 'El teléfono está vacío';
-                  }
-                  return null;
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _phone,
+                      decoration: InputDecoration(
+                        filled: true,
+                        prefixIcon: Icon(Icons.phone_iphone),
+                        hintText: 'Teléfono del alumno',
+                        labelText: 'Teléfono',
+                      ),
+                      keyboardType: TextInputType.phone,
+                      onChanged: (value) {
+                        setState(() => _phone = value);
+                      },
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return 'El teléfono está vacío';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      final Uri _phoneLaunchUri =
+                          Uri(scheme: 'tel', path: _phone);
+                      _launchURL(_phoneLaunchUri.toString());
+                    },
+                    icon: Icon(Icons.phone),
+                  )
+                ],
               ),
               SizedBox(height: 16.0),
-              TextFormField(
-                initialValue: _email,
-                textCapitalization: TextCapitalization.none,
-                decoration: InputDecoration(
-                  filled: true,
-                  prefixIcon: Icon(Icons.email),
-                  hintText: 'Email del alumno',
-                  labelText: 'Email',
-                ),
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  setState(() => _email = value);
-                },
-                validator: (value) =>
-                    EmailValidator.validate(value) ? null : "Email no válido",
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _email,
+                      textCapitalization: TextCapitalization.none,
+                      decoration: InputDecoration(
+                        filled: true,
+                        prefixIcon: Icon(Icons.email),
+                        hintText: 'Email del alumno',
+                        labelText: 'Email',
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (value) {
+                        setState(() => _email = value);
+                      },
+                      validator: (value) => EmailValidator.validate(value)
+                          ? null
+                          : "Email no válido",
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      final Uri _emailLaunchUri =
+                          Uri(scheme: 'mailto', path: _email);
+                      _launchURL(_emailLaunchUri.toString());
+                    },
+                    icon: Icon(Icons.mail),
+                  )
+                ],
               ),
               SizedBox(height: 16.0),
-              TextFormField(
-                initialValue: _address,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  filled: true,
-                  prefixIcon: Icon(Icons.home),
-                  hintText: 'Dirección del alumno',
-                  labelText: 'Dirección',
-                ),
-                keyboardType: TextInputType.streetAddress,
-                onChanged: (value) {
-                  setState(() => _address = value);
-                },
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return 'La dirección está vacía';
-                  }
-                  return null;
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _address,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        filled: true,
+                        prefixIcon: Icon(Icons.home),
+                        hintText: 'Dirección del alumno',
+                        labelText: 'Dirección',
+                      ),
+                      keyboardType: TextInputType.streetAddress,
+                      onChanged: (value) {
+                        setState(() => _address = value);
+                      },
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return 'La dirección está vacía';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      final parameters = {'api': '1', 'query': _address};
+                      final uri = Uri.https(
+                          "www.google.com", "maps/search/", parameters);
+                      _launchURL(uri.toString());
+                    },
+                    icon: Icon(Icons.map),
+                  )
+                ],
               ),
             ],
           ),
