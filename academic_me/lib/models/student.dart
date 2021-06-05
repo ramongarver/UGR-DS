@@ -25,9 +25,9 @@ class Student {
     if (_marks == null) {
       _marks = await _getMarksFromAPI();
       final exams = await Exams.getExams();
-      _marks.forEach((m) {
-        m.exam = exams.exams.singleWhere((e) => e.id == m.examId);
-      });
+      for(final _mark in _marks) {
+        _mark.exam = exams.exams.singleWhere((e) => e.id == _mark.examId);
+      }
     }
 
     return _marks;
