@@ -113,7 +113,7 @@ class _ExamDetailsState extends State<ExamDetails> {
           SizedBox(height: 30.0),
           Center(
               child: Text(
-            'Exámenes'.toUpperCase(),
+            'Estudiantes examinados'.toUpperCase(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
