@@ -17,6 +17,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.orange,
         accentColor: Colors.orangeAccent,
+        colorScheme: ColorScheme.light().copyWith(
+          primary: Colors.orange,
+          secondary: Colors.orange,
+          secondaryVariant: Colors.orangeAccent,
+        ),
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: Colors.orangeAccent),
       ),

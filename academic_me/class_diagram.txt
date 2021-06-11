@@ -1,0 +1,416 @@
+@startuml
+set namespaceSeparator ::
+
+class "academic_me::development::my_http_overrides.dart::MyHttpOverrides" {
+  +HttpClient* createHttpClient()
+}
+
+"dart::_http::HttpOverrides" <|-- "academic_me::development::my_http_overrides.dart::MyHttpOverrides"
+
+class "academic_me::main.dart::MyApp" {
+  +Widget* build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "academic_me::main.dart::MyApp"
+
+class "academic_me::main.dart::MainPage" {
+  +_MainPageState* createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::main.dart::MainPage"
+
+class "academic_me::main.dart::_MainPageState" {
+  -int* _selectedIndex
+  -List<Widget*>* _children
+  -void _onItemTapped()
+  +Widget* build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::main.dart::_MainPageState"
+
+class "academic_me::models::credentials.dart::Credentials" {
+  {static} +String* baseAddress
+  {static} +String* applicationName
+  {static} +String* username
+  {static} +String* password
+  {static} +String* basicAuth
+}
+
+class "academic_me::models::exam.dart::Exam" {
+  +int* id
+  +String* name
+  +DateTime* date
+  +int* subjectId
+  -Iterable<Mark*>* _marks
+  {static} -String* _tablePath
+  {static} +int* idProfesorSiempre
+  +Future<Iterable<Mark*>*>* marks
+  +Future<double*>* mean
+  +Future<double*>* minimum
+  +Future<double*>* maximum
+  -Future<Iterable<Mark*>*>* _getMarksFromAPI()
+  +void updateMarks()
+  +Map<String*, dynamic>* toJson()
+  {static} +Future<Exam*>* getExam()
+  {static} +Future<Exam*>* createExam()
+  {static} +Future<void>* deleteExam()
+  {static} +Future<Exam*>* updateExam()
+}
+
+class "academic_me::models::exams.dart::Exams" {
+  +List<Exam*>* exams
+  {static} +Future<Exams*>* getExams()
+}
+
+class "academic_me::models::mark.dart::Mark" {
+  +int* id
+  +int* studentId
+  +int* examId
+  +double* grade
+  +String* urlPhoto
+  +Exam* exam
+  +Student* student
+  {static} -String* _tablePath
+  {static} +int* idProfesorSiempre
+  {static} +Future<Mark*>* getMark()
+  {static} +Future<Mark*>* createMark()
+  {static} +Future<void>* deleteMark()
+  {static} +Future<Mark*>* updateMark()
+}
+
+"academic_me::models::mark.dart::Mark" o-- "academic_me::models::exam.dart::Exam*"
+"academic_me::models::mark.dart::Mark" o-- "academic_me::models::student.dart::Student*"
+
+class "academic_me::models::marks.dart::Marks" {
+  +List<Mark*>* marks
+  {static} +Future<Marks*>* getMarks()
+  {static} +Future<Iterable<Mark*>*>* getMarksStudent()
+  {static} +Future<Iterable<Mark*>*>* getMarksExam()
+}
+
+class "academic_me::models::student.dart::Student" {
+  +int* id
+  +String* name
+  +String* surname
+  +String* phone
+  +String* email
+  +String* address
+  -Iterable<Mark*>* _marks
+  {static} -String* _tablePath
+  +Future<Iterable<Mark*>*>* marks
+  +String* completeName
+  +Future<double*>* mean
+  +Future<double*>* minimum
+  +Future<double*>* maximum
+  -Future<Iterable<Mark*>*>* _getMarksFromAPI()
+  +void updateMarks()
+  {static} +Future<Student*>* getStudent()
+  {static} +Future<Student*>* createStudent()
+  {static} +Future<void>* deleteStudent()
+  {static} +Future<Student*>* updateStudent()
+}
+
+class "academic_me::models::students.dart::Students" {
+  +List<Student*>* students
+  {static} +Future<Students*>* getStudents()
+}
+
+class "academic_me::models::subject.dart::Subject" {
+  +int* id
+  +String* name
+  +int* professorId
+  {static} -String* _tablePath
+  {static} +int* idProfesorSiempre
+  +Map<String*, dynamic>* toJson()
+  {static} +Future<Subject*>* getSubject()
+  {static} +Future<Subject*>* createSubject()
+  {static} +Future<void>* deleteSubject()
+  {static} +Future<Subject*>* updateSubject()
+}
+
+class "academic_me::models::subjects.dart::Subjects" {
+  +List<Subject*>* subjects
+  {static} +Future<Subjects*>* getSubjects()
+}
+
+class "academic_me::screens::dialog_add_exam.dart::DialogAddExam" {
+  -Subject* _subject
+  +_DialogAddExamState* createState()
+}
+
+"academic_me::screens::dialog_add_exam.dart::DialogAddExam" o-- "academic_me::models::subject.dart::Subject*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::dialog_add_exam.dart::DialogAddExam"
+
+class "academic_me::screens::dialog_add_exam.dart::_DialogAddExamState" {
+  -String* _name
+  -DateTime* _date
+  -GlobalKey<FormState*>* _formKey
+  -bool* _saving
+  +void initState()
+  +Widget* build()
+  -void _saveAndExit()
+}
+
+"academic_me::screens::dialog_add_exam.dart::_DialogAddExamState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::dialog_add_exam.dart::_DialogAddExamState"
+
+class "academic_me::screens::dialog_add_exam_mark.dart::DialogAddExamMark" {
+  -Exam* _exam
+  +_DialogAddExamMarkState* createState()
+}
+
+"academic_me::screens::dialog_add_exam_mark.dart::DialogAddExamMark" o-- "academic_me::models::exam.dart::Exam*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::dialog_add_exam_mark.dart::DialogAddExamMark"
+
+class "academic_me::screens::dialog_add_exam_mark.dart::_DialogAddExamMarkState" {
+  -String* _grade
+  -Student* _student
+  -Future<List<DropdownMenuItem<Student*>*>*>* _studentsList
+  -GlobalKey<FormState*>* _formKey
+  -bool* _saving
+  +void initState()
+  +Widget* build()
+  +void afterFirstLayout()
+  +void showSnackbarIfNothingToAdd()
+  -void _saveAndExit()
+  -Future<List<DropdownMenuItem<Student*>*>*>* _getStudentsList()
+}
+
+"academic_me::screens::dialog_add_exam_mark.dart::_DialogAddExamMarkState" o-- "academic_me::models::student.dart::Student*"
+"academic_me::screens::dialog_add_exam_mark.dart::_DialogAddExamMarkState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::dialog_add_exam_mark.dart::_DialogAddExamMarkState"
+"after_layout::after_layout.dart::AfterLayoutMixin" <|-- "academic_me::screens::dialog_add_exam_mark.dart::_DialogAddExamMarkState"
+
+class "academic_me::screens::dialog_add_student.dart::DialogAddStudent" {
+  +_DialogAddStudentState* createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::dialog_add_student.dart::DialogAddStudent"
+
+class "academic_me::screens::dialog_add_student.dart::_DialogAddStudentState" {
+  -String* _name
+  -String* _surname
+  -String* _phone
+  -String* _email
+  -String* _address
+  -GlobalKey<FormState*>* _formKey
+  -bool* _saving
+  +Widget* build()
+  -void _saveAndExit()
+  +Form* buildStudentForm()
+}
+
+"academic_me::screens::dialog_add_student.dart::_DialogAddStudentState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::dialog_add_student.dart::_DialogAddStudentState"
+
+class "academic_me::screens::dialog_add_student_mark.dart::DialogAddStudentMark" {
+  -Student* _student
+  +_DialogAddStudentMarkState* createState()
+}
+
+"academic_me::screens::dialog_add_student_mark.dart::DialogAddStudentMark" o-- "academic_me::models::student.dart::Student*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::dialog_add_student_mark.dart::DialogAddStudentMark"
+
+class "academic_me::screens::dialog_add_student_mark.dart::_DialogAddStudentMarkState" {
+  -String* _grade
+  -Exam* _exam
+  -Future<List<DropdownMenuItem<Exam*>*>*>* _examsList
+  -GlobalKey<FormState*>* _formKey
+  -bool* _saving
+  +void initState()
+  +Widget* build()
+  +void afterFirstLayout()
+  +void showSnackbarIfNothingToAdd()
+  -void _saveAndExit()
+  -Future<List<DropdownMenuItem<Exam*>*>*>* _getExamsList()
+}
+
+"academic_me::screens::dialog_add_student_mark.dart::_DialogAddStudentMarkState" o-- "academic_me::models::exam.dart::Exam*"
+"academic_me::screens::dialog_add_student_mark.dart::_DialogAddStudentMarkState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::dialog_add_student_mark.dart::_DialogAddStudentMarkState"
+"after_layout::after_layout.dart::AfterLayoutMixin" <|-- "academic_me::screens::dialog_add_student_mark.dart::_DialogAddStudentMarkState"
+
+class "academic_me::screens::dialog_add_subject.dart::DialogAddSubject" {
+  +_DialogAddSubjectState* createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::dialog_add_subject.dart::DialogAddSubject"
+
+class "academic_me::screens::dialog_add_subject.dart::_DialogAddSubjectState" {
+  -String* _name
+  -GlobalKey<FormState*>* _formKey
+  -bool* _saving
+  +Widget* build()
+  -void _saveAndExit()
+}
+
+"academic_me::screens::dialog_add_subject.dart::_DialogAddSubjectState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::dialog_add_subject.dart::_DialogAddSubjectState"
+
+class "academic_me::screens::dialog_modify_mark.dart::Visualizar" {
+  +int* index
+  {static} +List<Visualizar*>* values
+  {static} +Visualizar* estudiante
+  {static} +Visualizar* examen
+}
+
+"academic_me::screens::dialog_modify_mark.dart::Visualizar" o-- "academic_me::screens::dialog_modify_mark.dart::Visualizar*"
+
+class "academic_me::screens::dialog_modify_mark.dart::ModifyMarkDialog" {
+  -Mark* _mark
+  -Visualizar* _visualizar
+  +_ModifyMarkDialogState* createState()
+}
+
+"academic_me::screens::dialog_modify_mark.dart::ModifyMarkDialog" o-- "academic_me::models::mark.dart::Mark*"
+"academic_me::screens::dialog_modify_mark.dart::ModifyMarkDialog" o-- "academic_me::screens::dialog_modify_mark.dart::Visualizar*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::dialog_modify_mark.dart::ModifyMarkDialog"
+
+class "academic_me::screens::dialog_modify_mark.dart::_ModifyMarkDialogState" {
+  -String* _grade
+  -GlobalKey<FormState*>* _formKey
+  -bool* _saving
+  +void initState()
+  +Widget* build()
+}
+
+"academic_me::screens::dialog_modify_mark.dart::_ModifyMarkDialogState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::dialog_modify_mark.dart::_ModifyMarkDialogState"
+
+class "academic_me::screens::exams_list_view.dart::ExamsListView" {
+  -Subject* _subject
+  +_ExamsListViewState* createState()
+}
+
+"academic_me::screens::exams_list_view.dart::ExamsListView" o-- "academic_me::models::subject.dart::Subject*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::exams_list_view.dart::ExamsListView"
+
+class "academic_me::screens::exams_list_view.dart::_ExamsListViewState" {
+  -String* _name
+  -GlobalKey<FormState*>* _formKey
+  -TextStyle* _biggerFont
+  -bool* _saving
+  +void initState()
+  -Widget* _buildExams()
+  -Future<void>* _showRemoveDialog()
+  -void _pushAddExam()
+  -void _saveAndExit()
+  +Widget* build()
+}
+
+"academic_me::screens::exams_list_view.dart::_ExamsListViewState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"academic_me::screens::exams_list_view.dart::_ExamsListViewState" o-- "flutter::src::painting::text_style.dart::TextStyle*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::exams_list_view.dart::_ExamsListViewState"
+
+class "academic_me::screens::exam_details.dart::ExamDetails" {
+  -Exam* _exam
+  +_ExamDetailsState* createState()
+}
+
+"academic_me::screens::exam_details.dart::ExamDetails" o-- "academic_me::models::exam.dart::Exam*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::exam_details.dart::ExamDetails"
+
+class "academic_me::screens::exam_details.dart::_ExamDetailsState" {
+  -String* _name
+  -DateTime* _date
+  -TextStyle* _biggerFont
+  -GlobalKey<FormState*>* _formKey
+  +int* decimalPlaces
+  -bool* _saving
+  +void initState()
+  +Widget* build()
+  -void _saveAndExit()
+  -Widget* _buildMarks()
+  -void _pushAddMark()
+  -Future<void>* _showRemoveMarkDialog()
+}
+
+"academic_me::screens::exam_details.dart::_ExamDetailsState" o-- "flutter::src::painting::text_style.dart::TextStyle*"
+"academic_me::screens::exam_details.dart::_ExamDetailsState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::exam_details.dart::_ExamDetailsState"
+
+class "academic_me::screens::exam_details.dart::Statistics" {
+  -Exam* _exam
+  -int* _decimalPlaces
+  +Widget* build()
+}
+
+"academic_me::screens::exam_details.dart::Statistics" o-- "academic_me::models::exam.dart::Exam*"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "academic_me::screens::exam_details.dart::Statistics"
+
+class "academic_me::screens::students_list_view.dart::StudentsListView" {
+  +_StudentsListViewState* createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::students_list_view.dart::StudentsListView"
+
+class "academic_me::screens::students_list_view.dart::_StudentsListViewState" {
+  -TextStyle* _biggerFont
+  -Widget* _buildStudents()
+  -Future<void>* _showRemoveDialog()
+  -void _pushAddStudent()
+  +Widget* build()
+}
+
+"academic_me::screens::students_list_view.dart::_StudentsListViewState" o-- "flutter::src::painting::text_style.dart::TextStyle*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::students_list_view.dart::_StudentsListViewState"
+
+class "academic_me::screens::student_details.dart::StudentDetails" {
+  -Student* _student
+  +_StudentDetailsState* createState()
+}
+
+"academic_me::screens::student_details.dart::StudentDetails" o-- "academic_me::models::student.dart::Student*"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::student_details.dart::StudentDetails"
+
+class "academic_me::screens::student_details.dart::_StudentDetailsState" {
+  -String* _name
+  -String* _surname
+  -String* _phone
+  -String* _email
+  -String* _address
+  -TextStyle* _biggerFont
+  -GlobalKey<FormState*>* _formKey
+  +int* decimalPlaces
+  -bool* _saving
+  +void initState()
+  +Widget* build()
+  +Form* buildStudentForm()
+  -void _saveAndExit()
+  -Widget* _buildMarks()
+  -void _pushAddMark()
+  -Future<void>* _showRemoveMarkDialog()
+}
+
+"academic_me::screens::student_details.dart::_StudentDetailsState" o-- "flutter::src::painting::text_style.dart::TextStyle*"
+"academic_me::screens::student_details.dart::_StudentDetailsState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState*>*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::student_details.dart::_StudentDetailsState"
+
+class "academic_me::screens::student_details.dart::Statistics" {
+  -Student* _student
+  -int* _decimalPlaces
+  +Widget* build()
+}
+
+"academic_me::screens::student_details.dart::Statistics" o-- "academic_me::models::student.dart::Student*"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "academic_me::screens::student_details.dart::Statistics"
+
+class "academic_me::screens::subjects_list_view.dart::SubjectsListView" {
+  +_SubjectsListViewState* createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "academic_me::screens::subjects_list_view.dart::SubjectsListView"
+
+class "academic_me::screens::subjects_list_view.dart::_SubjectsListViewState" {
+  -TextStyle* _biggerFont
+  -Widget* _buildSubjects()
+  -Future<void>* _showRemoveDialog()
+  -void _pushAddSubject()
+  +Widget* build()
+}
+
+"academic_me::screens::subjects_list_view.dart::_SubjectsListViewState" o-- "flutter::src::painting::text_style.dart::TextStyle*"
+"flutter::src::widgets::framework.dart::State" <|-- "academic_me::screens::subjects_list_view.dart::_SubjectsListViewState"
+
+
+@enduml

@@ -42,7 +42,7 @@ class _DialogAddSubjectState extends State<DialogAddSubject> {
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
                             filled: true,
-                            prefixIcon: Icon(Icons.person),
+                            prefixIcon: Icon(Icons.school),
                             hintText: 'Nombre de la asignatura',
                             labelText: 'Nombre',
                           ),

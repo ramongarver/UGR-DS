@@ -57,7 +57,7 @@ class Subject {
   static Future<void> deleteSubject(int id) async {
     final http.Response response = await http.delete(
       Uri.https(Credentials.baseAddress,
-        Credentials.applicationName + _tablePath + id.toString()),
+          Credentials.applicationName + _tablePath + id.toString()),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'authorization': Credentials.basicAuth
@@ -71,17 +71,15 @@ class Subject {
 
   /////////// update /////////
 
-  static Future<Subject> updateSubject(
-      int id, String name, int professorId) async {
+  static Future<Subject> updateSubject(int id, String name) async {
     final http.Response response = await http.put(
       Uri.https(Credentials.baseAddress,
-        Credentials.applicationName + _tablePath + id.toString()),
+          Credentials.applicationName + _tablePath + id.toString()),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'authorization': Credentials.basicAuth
       },
-      body: jsonEncode(
-          <String, dynamic>{'name': name, 'professor_id': professorId}),
+      body: jsonEncode(<String, dynamic>{'name': name}),
     );
     if (response.statusCode == 200)
       return Subject.fromJson(jsonDecode(response.body));

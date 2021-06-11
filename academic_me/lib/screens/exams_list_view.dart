@@ -16,46 +16,95 @@ class ExamsListView extends StatefulWidget {
 }
 
 class _ExamsListViewState extends State<ExamsListView> {
+  String _name;
+  final _formKey = GlobalKey<FormState>();
+
   final _biggerFont = TextStyle(fontSize: 18.0);
 
-  Widget _buildExams() {
-    return FutureBuilder<Exams>(
-        future: Exams.getExams(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              final filtered = snapshot.data.exams
-                  .where((exam) => exam.subjectId == widget._subject.id);
-              final tiles = filtered.map(
-                (Exam exam) {
-                  return ListTile(
-                      title: Text(
-                        exam.name,
-                        style: _biggerFont,
-                      ),
-                      onLongPress: () {
-                        _showRemoveDialog(exam);
-                      },
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute<bool>(
-                            builder: (BuildContext context) {
-                          return ExamDetails(exam);
-                        })).then((changed) {
-                          if (changed ?? false) setState(() {});
-                        });
-                      });
-                },
-              );
-              final divided = ListTile.divideTiles(
-                context: context,
-                tiles: tiles,
-              ).toList();
+  bool _saving = false;
 
-              return ListView(children: divided);
-            }
-          } else if (snapshot.hasError) return Text('${snapshot.error}');
-          return Center(child: CircularProgressIndicator());
-        });
+  @override
+  void initState() {
+    super.initState();
+    _name = widget._subject.name;
+  }
+
+  Widget _buildExams() {
+    return Column(
+      children: [
+        SizedBox(height: 12.0),
+        Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: TextFormField(
+              initialValue: _name,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                filled: true,
+                prefixIcon: Icon(Icons.school),
+                hintText: 'Nombre de la asignatura',
+                labelText: 'Nombre',
+              ),
+              onChanged: (value) {
+                _name = value;
+              },
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'El nombre está vacío';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 30.0),
+        Center(
+            child: Text(
+          'Exámenes de la asignatura'.toUpperCase(),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        )),
+        FutureBuilder<Exams>(
+            future: Exams.getExams(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  final filtered = snapshot.data.exams
+                      .where((exam) => exam.subjectId == widget._subject.id);
+                  final tiles = filtered.map(
+                    (Exam exam) {
+                      return ListTile(
+                          title: Text(
+                            exam.name,
+                            style: _biggerFont,
+                          ),
+                          onLongPress: () {
+                            _showRemoveDialog(exam);
+                          },
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute<bool>(
+                                builder: (BuildContext context) {
+                              return ExamDetails(exam);
+                            })).then((changed) {
+                              if (changed ?? false) setState(() {});
+                            });
+                          });
+                    },
+                  );
+                  final divided = ListTile.divideTiles(
+                    context: context,
+                    tiles: tiles,
+                  ).toList();
+
+                  return Expanded(child: ListView(children: divided));
+                }
+              } else if (snapshot.hasError) return Text('${snapshot.error}');
+              return Center(child: CircularProgressIndicator());
+            }),
+      ],
+    );
   }
 
   Future<void> _showRemoveDialog(Exam exam) async {
@@ -103,13 +152,34 @@ class _ExamsListViewState extends State<ExamsListView> {
     });
   }
 
+  void _saveAndExit() {
+    if (_formKey.currentState.validate()) {
+      setState(() => _saving = true);
+      Subject.updateSubject(widget._subject.id, _name).then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Asignatura modificada correctamente")));
+        Navigator.of(context).pop(true);
+      }).catchError((e) {
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al intentar modificar asignatura")));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Exámenes de " + widget._subject.name),
+        title: Text("Asignatura: " + widget._subject.name),
         actions: [
-          //IconButton(icon: Icon(Icons.save), onPressed: _saveAndExit)
+          if (_saving)
+            Center(child: CircularProgressIndicator())
+          else
+            IconButton(
+                icon: Icon(Icons.save),
+                onPressed: _saveAndExit,
+                tooltip: "Guardar y salir")
         ],
       ),
       body: _buildExams(),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:academic_me/screens/dialog_modify_mark.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:academic_me/models/mark.dart';
@@ -113,7 +114,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                   labelText: 'Nombre',
                 ),
                 onChanged: (value) {
-                  setState(() => _name = value);
+                  _name = value;
                 },
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -132,7 +133,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                   labelText: 'Apellido(s)',
                 ),
                 onChanged: (value) {
-                  setState(() => _surname = value);
+                  _surname = value;
                 },
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -155,7 +156,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       ),
                       keyboardType: TextInputType.phone,
                       onChanged: (value) {
-                        setState(() => _phone = value);
+                        _phone = value;
                       },
                       validator: (text) {
                         if (text == null || text.isEmpty) {
@@ -172,6 +173,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       _launchURL(_phoneLaunchUri.toString());
                     },
                     icon: Icon(Icons.phone),
+                    tooltip: "Llamar",
                   )
                 ],
               ),
@@ -190,7 +192,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (value) {
-                        setState(() => _email = value);
+                        _email = value;
                       },
                       validator: (value) => EmailValidator.validate(value)
                           ? null
@@ -204,6 +206,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       _launchURL(_emailLaunchUri.toString());
                     },
                     icon: Icon(Icons.mail),
+                    tooltip: "Enviar email",
                   )
                 ],
               ),
@@ -222,7 +225,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       ),
                       keyboardType: TextInputType.streetAddress,
                       onChanged: (value) {
-                        setState(() => _address = value);
+                        _address = value;
                       },
                       validator: (text) {
                         if (text == null || text.isEmpty) {
@@ -240,6 +243,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                       _launchURL(uri.toString());
                     },
                     icon: Icon(Icons.map),
+                    tooltip: "Localizar dirección",
                   )
                 ],
               ),
@@ -283,7 +287,17 @@ class _StudentDetailsState extends State<StudentDetails> {
                         _showRemoveMarkDialog(mark);
                       },
                       onTap: () {
-                        // TODO: Mostrar diálogo para modificar nota de examen
+                        showDialog<bool>(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (context) =>
+                                    ModifyMarkDialog(mark, Visualizar.examen))
+                            .then((modified) {
+                          if (modified ?? false)
+                            setState(() {
+                              widget._student.updateMarks();
+                            });
+                        });
                       });
                 },
               ).toList();
@@ -361,72 +375,78 @@ class Statistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      // TODO solucionar formato (la tarjeta izquierda se queda pequeña)
-      children: [
-        Expanded(
-          child: Card(
-            child: Container(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    "MEDIA",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Card(
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "MEDIA",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      FutureBuilder(
+                          future: _student.mean,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData)
+                              return Text(snapshot.data
+                                  .toStringAsFixed(_decimalPlaces));
+                            return Text("-");
+                          },
+                          initialData: null),
+                    ],
                   ),
-                  FutureBuilder(
-                      future: _student.mean,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          return Text(
-                              snapshot.data.toStringAsFixed(_decimalPlaces));
-                        return Text("-");
-                      },
-                      initialData: null),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: Card(
-            child: Container(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    "MÁXIMO",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  FutureBuilder(
-                      future: _student.maximum,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          return Text(
-                              snapshot.data.toStringAsFixed(_decimalPlaces));
-                        return Text("-");
-                      },
-                      initialData: null),
-                  Text(
-                    "MÍNIMO",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  FutureBuilder(
-                      future: _student.minimum,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          return Text(
-                              snapshot.data.toStringAsFixed(_decimalPlaces));
-                        return Text("-");
-                      },
-                      initialData: null),
-                ],
+          Expanded(
+            child: Card(
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "MÁXIMO",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    FutureBuilder(
+                        future: _student.maximum,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            return Text(
+                                snapshot.data.toStringAsFixed(_decimalPlaces));
+                          return Text("-");
+                        },
+                        initialData: null),
+                    Text(
+                      "MÍNIMO",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    FutureBuilder(
+                        future: _student.minimum,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            return Text(
+                                snapshot.data.toStringAsFixed(_decimalPlaces));
+                          return Text("-");
+                        },
+                        initialData: null),
+                  ],
+                ),
               ),
             ),
-          ),
-        )
-      ],
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          )
+        ],
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      ),
     );
   }
 }

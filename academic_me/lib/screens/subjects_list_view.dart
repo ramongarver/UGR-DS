@@ -32,10 +32,12 @@ class _SubjectsListViewState extends State<SubjectsListView> {
                         _showRemoveDialog(subject);
                       },
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute<void>(
+                        Navigator.of(context).push(MaterialPageRoute<bool>(
                             builder: (BuildContext context) {
                           return ExamsListView(subject);
-                        }));
+                        })).then((modified) {
+                          if (modified ?? false) setState(() {});
+                        });
                       });
                 },
               );

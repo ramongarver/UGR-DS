@@ -1,0 +1,110 @@
+@startuml
+set namespaceSeparator ::
+
+class "academic_me::models::exam.dart::Exam" {
+  +int* id
+  +String* name
+  +DateTime* date
+  +int* subjectId
+  -Iterable<Mark*>* _marks
+  {static} -String* _tablePath
+  {static} +int* idProfesorSiempre
+  +Future<Iterable<Mark*>*>* marks
+  +Future<double*>* mean
+  +Future<double*>* minimum
+  +Future<double*>* maximum
+  -Future<Iterable<Mark*>*>* _getMarksFromAPI()
+  +void updateMarks()
+  +Map<String*, dynamic>* toJson()
+  {static} +Future<Exam*>* getExam()
+  {static} +Future<Exam*>* createExam()
+  {static} +Future<void>* deleteExam()
+  {static} +Future<Exam*>* updateExam()
+}
+
+class "academic_me::models::exams.dart::Exams" {
+  +List<Exam*>* exams
+  {static} +Future<Exams*>* getExams()
+}
+
+"academic_me::models::exams.dart::Exams" o-- "academic_me::models::exam.dart::Exam"
+
+class "academic_me::models::mark.dart::Mark" {
+  +int* id
+  +int* studentId
+  +int* examId
+  +double* grade
+  +String* urlPhoto
+  +Exam* exam
+  +Student* student
+  {static} -String* _tablePath
+  {static} +int* idProfesorSiempre
+  {static} +Future<Mark*>* getMark()
+  {static} +Future<Mark*>* createMark()
+  {static} +Future<void>* deleteMark()
+  {static} +Future<Mark*>* updateMark()
+}
+
+"academic_me::models::mark.dart::Mark" --o "academic_me::models::exam.dart::Exam"
+"academic_me::models::mark.dart::Mark" --o "academic_me::models::student.dart::Student"
+
+class "academic_me::models::marks.dart::Marks" {
+  +List<Mark*>* marks
+  {static} +Future<Marks*>* getMarks()
+  {static} +Future<Iterable<Mark*>*>* getMarksStudent()
+  {static} +Future<Iterable<Mark*>*>* getMarksExam()
+}
+
+"academic_me::models::marks.dart::Marks" o-- "academic_me::models::mark.dart::Mark"
+
+class "academic_me::models::student.dart::Student" {
+  +int* id
+  +String* name
+  +String* surname
+  +String* phone
+  +String* email
+  +String* address
+  -Iterable<Mark*>* _marks
+  {static} -String* _tablePath
+  +Future<Iterable<Mark*>*>* marks
+  +String* completeName
+  +Future<double*>* mean
+  +Future<double*>* minimum
+  +Future<double*>* maximum
+  -Future<Iterable<Mark*>*>* _getMarksFromAPI()
+  +void updateMarks()
+  {static} +Future<Student*>* getStudent()
+  {static} +Future<Student*>* createStudent()
+  {static} +Future<void>* deleteStudent()
+  {static} +Future<Student*>* updateStudent()
+}
+
+class "academic_me::models::students.dart::Students" {
+  +List<Student*>* students
+  {static} +Future<Students*>* getStudents()
+}
+
+"academic_me::models::students.dart::Students" o-- "academic_me::models::student.dart::Student"
+
+class "academic_me::models::subject.dart::Subject" {
+  +int* id
+  +String* name
+  +int* professorId
+  {static} -String* _tablePath
+  {static} +int* idProfesorSiempre
+  +Map<String*, dynamic>* toJson()
+  {static} +Future<Subject*>* getSubject()
+  {static} +Future<Subject*>* createSubject()
+  {static} +Future<void>* deleteSubject()
+  {static} +Future<Subject*>* updateSubject()
+}
+
+class "academic_me::models::subjects.dart::Subjects" {
+  +List<Subject*>* subjects
+  {static} +Future<Subjects*>* getSubjects()
+}
+
+"academic_me::models::subjects.dart::Subjects" o-- "academic_me::models::subject.dart::Subject"
+
+
+@enduml

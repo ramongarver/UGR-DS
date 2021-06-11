@@ -10,7 +10,9 @@ class Subjects {
   Subjects(this.subjects);
 
   Subjects.fromJson(List<dynamic> json)
-      : subjects = json.map<Subject>((e) => Subject.fromJson(e)).toList();
+      : subjects = json.map<Subject>((e) => Subject.fromJson(e)).toList() {
+    subjects.sort((a, b) => a.name.compareTo(b.name));
+  }
 
   //////////// get //////////////////
   static Future<Subjects> getSubjects() async {

@@ -10,7 +10,9 @@ class Students {
   Students(this.students);
 
   Students.fromJson(List<dynamic> json)
-      : students = json.map<Student>((e) => Student.fromJson(e)).toList();
+      : students = json.map<Student>((e) => Student.fromJson(e)).toList() {
+    students.sort((a, b) => a.surname.compareTo(b.surname));
+  }
 
   //////////// get //////////////////
   static Future<Students> getStudents() async {

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:academic_me/screens/dialog_modify_mark.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:academic_me/models/exam.dart';
@@ -58,52 +59,54 @@ class _ExamDetailsState extends State<ExamDetails> {
           SizedBox(height: 10.0),
           Form(
               key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    initialValue: _name,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.school),
-                      hintText: 'Nombre del examen',
-                      labelText: 'Nombre',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      initialValue: _name,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        filled: true,
+                        prefixIcon: Icon(Icons.school),
+                        hintText: 'Nombre del examen',
+                        labelText: 'Nombre',
+                      ),
+                      onChanged: (value) {
                         _name = value;
-                      });
-                    },
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'El nombre está vacío';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    children: [
-                      Text(DateFormat('yyyy-MM-dd').format(_date)),
-                      IconButton(
-                        icon: Icon(Icons.calendar_today),
-                        onPressed: () {
-                          DatePicker.showDatePicker(context,
-                              showTitleActions: true,
-                              minTime: DateTime(2018, 3, 5),
-                              maxTime: DateTime(2022, 6, 7), onChanged: (date) {
-                            setState(() => _date = date);
-                          }, onConfirm: (date) {
-                            setState(() => _date = date);
+                      },
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return 'El nombre está vacío';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Text(DateFormat('yyyy-MM-dd').format(_date)),
+                        IconButton(
+                          icon: Icon(Icons.calendar_today),
+                          onPressed: () {
+                            DatePicker.showDatePicker(context,
+                                showTitleActions: true,
+                                minTime: DateTime(2018, 3, 5),
+                                maxTime: DateTime(2022, 6, 7),
+                                onChanged: (date) {
+                              setState(() => _date = date);
+                            }, onConfirm: (date) {
+                              setState(() => _date = date);
+                            },
+                                currentTime: DateTime.now(),
+                                locale: LocaleType.es);
                           },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.es);
-                        },
-                      )
-                    ],
-                  )
-                ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
               )),
           SizedBox(height: 30.0),
           Padding(
@@ -159,7 +162,16 @@ class _ExamDetailsState extends State<ExamDetails> {
                         _showRemoveMarkDialog(mark);
                       },
                       onTap: () {
-                        // TODO: Mostrar diálogo para modificar nota de estudiante
+                        showDialog<bool>(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) => ModifyMarkDialog(
+                                mark, Visualizar.estudiante)).then((modified) {
+                          if (modified ?? false)
+                            setState(() {
+                              widget._exam.updateMarks();
+                            });
+                        });
                       });
                 },
               ).toList();
@@ -237,73 +249,77 @@ class Statistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      // TODO solucionar formato (la tarjeta izquierda se queda pequeña)
-      children: [
-        Expanded(
-          child: Card(
-            child: Container(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    "MEDIA",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  FutureBuilder(
-                      future: _exam.mean,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          return Text(
-                              snapshot.data.toStringAsFixed(_decimalPlaces));
-                        return Text("-");
-                      },
-                      initialData: null),
-                ],
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Card(
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "MEDIA",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    FutureBuilder(
+                        future: _exam.mean,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            return Text(
+                                snapshot.data.toStringAsFixed(_decimalPlaces));
+                          return Text("-");
+                        },
+                        initialData: null),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: Card(
-            child: Container(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    "MÁXIMO",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  FutureBuilder(
-                      future: _exam.maximum,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          return Text(
-                              snapshot.data.toStringAsFixed(_decimalPlaces));
-                        return Text("-");
-                      },
-                      initialData: null),
-                  SizedBox(height: 5.0),
-                  Text(
-                    "MÍNIMO",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  FutureBuilder(
-                      future: _exam.minimum,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData)
-                          return Text(
-                              snapshot.data.toStringAsFixed(_decimalPlaces));
-                        return Text("-");
-                      },
-                      initialData: null),
-                ],
+          Expanded(
+            child: Card(
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "MÁXIMO",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    FutureBuilder(
+                        future: _exam.maximum,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            return Text(
+                                snapshot.data.toStringAsFixed(_decimalPlaces));
+                          return Text("-");
+                        },
+                        initialData: null),
+                    SizedBox(height: 5.0),
+                    Text(
+                      "MÍNIMO",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    FutureBuilder(
+                        future: _exam.minimum,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData)
+                            return Text(
+                                snapshot.data.toStringAsFixed(_decimalPlaces));
+                          return Text("-");
+                        },
+                        initialData: null),
+                  ],
+                ),
               ),
             ),
-          ),
-        )
-      ],
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          )
+        ],
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      ),
     );
   }
 }
